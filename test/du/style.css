@@ -1,0 +1,284 @@
+/*css reset*/
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/*混合选择器*/
+/*div,a,ul{
+    font-size: 17px;
+}*/
+
+/*a.thin{
+    color: red;
+}*/
+
+/*标签选择器*/
+/*div{
+    width: 100px;
+}*/
+
+ul {
+    list-style: none;
+    line-height: 24px;
+}
+
+/*类选择器*/
+/*类重名的话，下边覆盖上边的，只覆盖单属性，而不是覆盖整个类所有属性*/
+/*.header{
+    width: 300px;
+}*/
+.header {
+    width: 100%;
+    /*overflow: hidden;*/
+    margin-top: 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    /*盒子尺寸*/
+}
+
+/*id选择器,优先级大于类选择器*/
+/*#news{
+    color: #000;
+}*/
+
+.menu,
+.more {
+    float: right;
+    font-size: 13px;
+}
+
+/*派生选择器*/
+.menu {
+    float: right;
+    list-style: none;
+    font-size: 13px;
+    /*color: #000;*/
+    /*a 颜色无法继承*/
+}
+
+/*">"代表直接子集，如果li里还有ul则选不到*/
+.menu>li {
+    float: left;
+    margin: 0 10px;
+}
+
+.menu>li a {
+    color: #000;
+    font-weight: 700;
+}
+
+/*样式覆盖 样式优先级 派生选择器低于id优先级*/
+.menu>li a.thin {
+    font-weight: 500;
+}
+
+.settings {
+    display: none;
+    width: 71px;
+    position: absolute;
+    left: -23px;
+    top: 25px;
+    border: 1px solid #d1d1d1;
+    box-shadow: 1px 1px 5px #d1d1d1;/*x偏移，y偏移，模糊度，阴影宽度，阴影颜色*/
+    background: #fff;
+}
+
+.settings:before {
+    position: absolute;
+    top: -6px;
+    width: 0;
+    height: 0;
+    left: 40px;
+    margin-left: -10px;
+    content: " ";
+    border-bottom: 5px solid #d1d1d1;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+
+.settings:after {
+    position: absolute;
+    bottom: 112px;
+    width: 0;
+    height: 0;
+    left: 40px;
+    margin-left: -10px;
+    content: " ";
+    border-bottom: 5px solid white;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+
+.settings li {
+    line-height: 28px;
+    text-align: center;
+}
+
+.settings li:hover {
+    background: #3385ff;
+}
+
+.settings li:hover>a {
+    color: #fff;
+}
+
+.header .settings li a {
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/*伪类选择器*/
+.setting-item:hover ul {
+    display: block;
+}
+
+.setting-item {
+    position: relative;/*相对自己的定位*/ /*absolute 绝对定位*/
+}
+
+.clear {
+    clear: both;
+}
+
+.more {
+    width: 60px;
+    height: 24px;
+    background-color: #38f;
+    color: #fff;
+    margin-left: 10px;
+    /*padding: 0 5px;*/
+    text-align: center;
+    line-height: 24px;/*行高，与height相同，垂直居中*/
+}
+.more a{
+    color: #fff;
+    text-decoration: none;
+}
+
+.content {
+    width: 100%;
+    text-align: center;
+    padding-top: 17px;
+}
+
+.logo {
+    width: 270px;
+    height: 129px;
+}
+
+.search {
+    position: relative;
+    margin: 0 auto;
+    width: 637px;
+}
+
+.search input {
+    float: left;
+    outline: none;
+    height: 36px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.search input:focus {
+    border: 1px solid #2d78f4;
+    padding: 0 8px;
+    font-size: 16px;
+}
+
+.camera {
+    width: 18px;
+    height: 16px;
+    margin-top: 20px;
+    position: absolute;
+    left: 510px;
+    top: 10px;
+    background: url(camera.png);
+    cursor: pointer;
+}
+
+.camera:hover {
+    background-position: 0 18px;
+}
+
+.search-input {
+    width: 540px;
+    height: 34px;
+    border: 1px solid #b6b6b6;
+}
+
+.search-btn {
+    width: 100px;
+    height: 36px;
+    background: #38f;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 36px;
+    font-size: 15px;
+    color: #fff;
+    margin-left: -5px;
+}
+
+.footer {
+    margin-top: 236px;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+}
+
+#qr {
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 27px;
+}
+
+#gw {
+    margin-left: 19px;
+}
+
+#p1 a {
+    color: #999;
+    margin-left: 23px;
+    line-height: 22px;
+}
+
+#p2 a {
+    color: #999;
+    line-height: 22px;
+}
+
+.icp {
+    width: 14px;
+    height: 17px;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    left: 0px;
+    top: 3px;
+    background: url(icons.png);
+    background-position: -600px -96px;
+}
+
+.gw {
+    width: 14px;
+    height: 17px;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    left: 0px;
+    top: 3px;
+    background: url(icons.png);
+    background-position: -623px -96px;
+}
+#pic1{
+    position: relative;
+    top: 4px;  
+    left: -1px;
+}
+#pic2{
+    position: relative;
+    top: 4px;  
+    left: -1px;
+}
