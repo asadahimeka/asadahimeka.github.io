@@ -59,7 +59,7 @@
 
 Gist打不开的话可以在hosts里添加([hosts更新地址](https://github.com/googlehosts/hosts/blob/master/hosts-files/hosts))
 
-192.30.253.118 gist.github.com
+```192.30.253.118 gist.github.com```
 
 这里有一个上传命令全过程的gif
 
