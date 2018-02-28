@@ -59,7 +59,7 @@
 
 Gist打不开的话可以在hosts里添加([hosts更新地址](https://github.com/googlehosts/hosts/blob/master/hosts-files/hosts))
 
-```192.30.253.118 gist.github.com```
+> ```192.30.253.118 gist.github.com```
 
 这里有一个上传命令全过程的gif
 
@@ -99,22 +99,22 @@ Gist打不开的话可以在hosts里添加([hosts更新地址](https://github.co
 
 ## 自动下载配置
 
-自动下载**默认是关闭的**
+自动下载 **默认是关闭的**
 
 打开的话要确保已经验证了token以及有可用的Gist
 
 当启动时会自动下载最新的配置文件
 
-通过命令面板里**"Sync : Advance Options > Toggle Auto-Download On Startup"**来打开或关闭
+通过命令面板里 **"Sync : Advance Options > Toggle Auto-Download On Startup"** 来打开或关闭
 
 ## 配置发生变化时自动上传
 
-自动上传**默认是关闭的**
+自动上传 **默认是关闭的**
 
 打开的话要确保已经验证了token以及有可用的Gist
 
 当配置改变时会自动上传最新的配置文件
 
-通过命令面板里**"Sync : Advance Options > Toggle Auto-Upload on Setting Change"**来打开或关闭
+通过命令面板里 **"Sync : Advance Options > Toggle Auto-Upload on Setting Change"** 来打开或关闭
 
 ### 更多查看[原文Readme](https://github.com/shanalikhan/code-settings-sync/blob/master/README.md)
