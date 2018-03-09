@@ -34,7 +34,7 @@ const getCodeById = id => mysql.select().table('test').where('a_tid', id);
 
 const logger = (ctx, next) => {
   console.log(`${new Date().toLocaleString()} ${ctx.request.method} ${ctx.request.url}`);
-  return next(); //** 前边要加return **
+  return next(); // **前边要加return**
 }
 
 const test = async ctx => {
@@ -58,7 +58,7 @@ app.use(route.get('/test', test));
 app.listen(3000);
 ```
 
-### 后来发现已经有现成的koa-logger了[捂脸]wwww
+#### 后来发现已经有现成的koa-logger了[捂脸]wwww
 
 ## Answers from stackoverflow
 
