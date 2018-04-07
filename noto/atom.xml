@@ -6,7 +6,7 @@
   <link href="/noto/atom.xml" rel="self"/>
   
   <link href="https://asadahimeka.github.io/noto/"/>
-  <updated>2018-03-04T12:56:08.033Z</updated>
+  <updated>2018-04-07T12:23:21.361Z</updated>
   <id>https://asadahimeka.github.io/noto/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>koa return not found</title>
+    <link href="https://asadahimeka.github.io/noto/2018/04/07/koa-return-not-found/"/>
+    <id>https://asadahimeka.github.io/noto/2018/04/07/koa-return-not-found/</id>
+    <published>2018-04-07T12:20:07.000Z</published>
+    <updated>2018-04-07T12:23:21.361Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;koa-returning-‘Not-Found’&quot;&gt;&lt;a href=&quot;#koa-returning-‘Not-Found’&quot; class=&quot;headerlink&quot; title=&quot;koa returning ‘Not Found’&quot;&gt;&lt;/a&gt;koa returning ‘Not Found’&lt;/h1&gt;&lt;p&gt;最近在看koa，用koa+mysql搭了个简单demo环境后准备试一下，然后就一直返回Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是logger中间件里的&lt;code&gt;next()&lt;/code&gt;前没加&lt;code&gt;return&lt;/code&gt; 。。。[喷水]&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="node" scheme="https://asadahimeka.github.io/noto/tags/node/"/>
+    
+      <category term="nodejs" scheme="https://asadahimeka.github.io/noto/tags/nodejs/"/>
+    
+      <category term="koa" scheme="https://asadahimeka.github.io/noto/tags/koa/"/>
+    
+      <category term="not found" scheme="https://asadahimeka.github.io/noto/tags/not-found/"/>
+    
+  </entry>
   
   <entry>
     <title>利用Settings Sync插件同步VS Code设置</title>
