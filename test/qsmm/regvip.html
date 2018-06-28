@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="MobileOptimized" content="320">
+  <meta name="screen-orientation" content="portrait">
+  <meta name="x5-orientation" content="portrait">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/nagaip.css">
+</head>
+
+<body>
+  <!-- template -->
+  <script type="text/x-template" id="bg-part-tpl">
+    <div style="position:relative;padding:0;">
+      <div style="height:100%">
+        <div class="bgs" :class="cls" :style="style">
+          <slot></slot>
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/x-template" id="btm-btn-tpl">
+    <div class="bg-btn-wr bg-btn-pos">
+      <button class="bg-btn" @click="$emit('btnclick')">{{text}}</button>
+    </div>
+  </script>
+  <script type="text/x-template" id="btm-a-tpl">
+    <div class="bg-btn-wr bg-a-pos">
+      <a :href="href" class="bg-a" @click="$emit('aclick')">{{text}}</a>
+    </div>
+  </script>
+  <script type="text/x-template" id="btm-goods-tpl">
+    <div class="goods">
+      <div v-for="(item, i) in items" :key="i" class="item clearfix">
+        <div class="item-text" :class="{fl:i%2!=0,fr:i%2==0}">
+          <h2 class="item-title">{{item.title}}</h2>
+          <p class="item-intro">{{item.intro}}</p>
+          <p class="item-ctn">
+            <span>{{item.ctn}}</span>
+            <span>{{item.ctn}}</span>
+            <!-- <br>
+              <span>②气垫BB粉扑 3只装</span> -->
+          </p>
+          <button class="item-price">{{item.price}}</button>
+        </div>
+        <div :class="{'item-img-r':i%2!=0,'item-img-l':i%2==0}">
+          <img :src="item.img" alt="">
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/x-template" id="modal-template">
+    <transition name="modal">
+      <div class="modal-mask">
+        <div class="modal-wrapper">
+          <div class="modal-container">
+            <button class="modal-close" @click="$emit('close')"></button>
+            <div class="modal-header">
+              <slot name="header"></slot>
+            </div>
+            <div class="modal-body">
+              <slot></slot>
+            </div>
+            <div class="modal-footer">
+              <slot name="footer"></slot>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </script>
+  <!-- template -->
+  <!-- app -->
+  <div id="app" class="page" v-cloak>
+    <div class="container">
+      <bg-part v-for="(item, index) in bn" :key="index" :item="item" cls="regvip"></bg-part>
+      <bg-part :item="11" cls="regvip-bg11">
+        <btm-goods :items="items"></btm-goods>
+        <!-- <btm-btn text="注册成为VIP" @btnclick="btnclk" style="width: 100%;"></btm-btn>
+        <btm-a text="点击注册按钮即同意《轻松妈妈VIP用户服务协议》" @aclick="open"></btm-a> -->
+      </bg-part>
+      <modal v-if="showModal" @close="showModal=false">
+        <h3 slot="header">custom header</h3>
+        <h3>custom custom custom</h3>
+        <h3>custom custom custom</h3>
+        <h3>custom custom custom</h3>
+        <h3>custom custom custom</h3>
+        <h3>custom custom custom</h3>
+      </modal>
+    </div>
+  </div>
+  <!-- app -->
+
+  <script src="js/lib/hotcss.js"></script>
+  <script src="js/lib/vue-2.5.16.js"></script>
+  <script src="js/lib/axios.js"></script>
+  <!-- <script src="js/dist/libs.min.js"></script> -->
+  <script src="js/regvip.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+.container {
+  background-color: #fff4d3;
+}
+
+.bg {
+  position: relative;
+  width: 100%;
+  height: 28.444rem;
+  background-image: url(../img/jotaijo/08.jpg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: top center;
+  overflow: hidden;
+}
+
+.inviter {
+  position: absolute;
+  z-index: 2;
+  top: 5.556rem;
+  left: 4.785rem;
+  font-size: 0.711rem;
+  line-height: 0.778rem;
+  color: #333333;
+  transform: rotate(-3deg);
+}
+
+.inv1{
+  max-width: 10rem;
+}
+
+.inv2{
+  top: 12rem;
+  left: 0;
+  width: 100%;
+  padding: 0 2rem;
+  transform: rotate(-4deg);
+  text-align: right;
+  p{
+    width: 100%;
+    max-height: 2rem;
+    text-align: right;
+    word-wrap: break-word;
+  }
+}
+
+.qr {
+  position: absolute;
+  z-index: 2;
+  top: 14.711rem;
+  left: 3.17rem;
+  width: 3.422rem;
+  height: 3.422rem;
+  img {
+    width: 100%;
+    transform: rotate(-3deg);
+  }
+}
+
+.btns{
+  position: absolute;
+  top: 25.481rem;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 1.378rem;
+}
+
+.btm-btn {
+  width: 6.222rem;
+  height: 1.63rem;
+  border-radius: 0.148rem;
+  font-size: 0.681rem;
+  line-height: 0.612rem;
+  text-align: center;
+}
+
+.bg-grown {
+  background-color: #b58f63;
+  color: #ffffff;
+}
+
+.bd-grown {
+  border-radius: 0.148rem;
+  border: solid 0.059rem #b58f63;
+  color: #956b3b;
+}
+
+@media screen and (min-width: 540px) {
+  .bg {
+    height: 1920/1080*100vw;
+  }
+  .inviter {
+    top: 375/1080*100vw;
+    left: 323/1080*100vw;
+    font-size: 48/1080*100vw;
+    line-height: 52/1080*100vw
+  }
+  .inv1{
+    max-width: 625/1080*100vw;
+  }
+  .inv2{
+    top: 808/1080*100vw;
+    left: 0;
+    padding: 0 135/1080*100vw;
+    line-height: 52/1080*100vw;
+    p{
+      max-height: 135/1080*100vw;
+    }
+  }
+  .qr {
+    top: 993/1080*100vw;
+    left: 214/1080*100vw;
+  }
+  .btns{
+    top: 1720/1080*100vw;
+    padding: 0 93/1080*100vw;
+  }
+}
