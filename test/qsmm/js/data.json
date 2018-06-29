@@ -1,6 +1,7 @@
 {
   "user": "asobie",
   "img": "img/jotaijo/qr.png",
+  "qrurl": "http://localhost:5500/jotaijo-share.html",
   "goods": [
     {
       "giftno": "大礼包一",

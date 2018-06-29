@@ -48,9 +48,6 @@
       })
     },
     methods: {
-      btnclk: function() {
-        console.log(111)
-      },
       open: function() {
         this.showModal = true
       }

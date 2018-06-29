@@ -1,10 +1,10 @@
 ;(function (Vue, http) {
   // register component
   Vue.component('hello', {
-    template: '#bg-part',
+    template: '#tpl',
     data: function() {
       return {
-        message: 'Hello!'
+
       }
     }
   })
@@ -14,7 +14,7 @@
   new Vue({
     el: '#app',
     data: {
-      a: false
+
     }
   })
 })(window.Vue, window.axios)

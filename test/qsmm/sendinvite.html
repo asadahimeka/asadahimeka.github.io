@@ -11,7 +11,6 @@
   <meta name="screen-orientation" content="portrait">
   <meta name="x5-orientation" content="portrait">
   <title>Document</title>
-  <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/nagaip.css">
 </head>
 
@@ -83,7 +82,9 @@
       <bg-part v-for="(item, index) in bn" :key="index" :item="item"></bg-part>
       <bg-part :item="11" cls="sendinv-bg11">
         <btm-goods :items="items"></btm-goods>
-        <btm-btn text="发送我的邀请函" @btnclick="btnclk" style="width: 100%;"></btm-btn>
+        <a href="jotaijo-share.html">
+          <btm-btn text="发送我的邀请函" style="width: 100%;"></btm-btn>
+        </a>
         <btm-a text="查看奖励规则" @aclick="open"></btm-a>
       </bg-part>
       <modal v-if="showModal" @close="showModal=false">
@@ -98,10 +99,7 @@
   </div>
   <!-- app -->
 
-  <script src="js/lib/hotcss.js"></script>
-  <script src="js/lib/vue-2.5.16.js"></script>
-  <script src="js/lib/axios.js"></script>
-  <!-- <script src="js/dist/libs.min.js"></script> -->
+  <script src="js/dist/libs.min.js"></script>
   <script src="js/sendinvite.js"></script>
 </body>
 
