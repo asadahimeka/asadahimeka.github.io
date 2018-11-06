@@ -78,18 +78,22 @@ li {
 
 a {
     text-decoration: none;
-    color: #f66;
+    /*color: #f66;*/
+    color: #ae81ff;
     border-bottom: 2px solid transparent;
     cursor: pointer;
 }
 
 a:hover {
-    color: #f33;
-    border-bottom-color: #f33;
+    /*color: #f33;
+    border-bottom-color: #f33;*/
+    color: #f92672;
+    border-bottom-color: #f92672;
 }
 
 strong {
-    color: #f66;
+    /*color: #f66;*/
+    color: #f92672;
 }
 
 code {
