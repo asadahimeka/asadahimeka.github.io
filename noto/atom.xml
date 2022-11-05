@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Himekana&#39;s</title>
+  
+  
+  <link href="/noto/atom.xml" rel="self"/>
+  
+  <link href="https://asadahimeka.github.io/noto/"/>
+  <updated>2018-04-07T12:23:21.361Z</updated>
+  <id>https://asadahimeka.github.io/noto/</id>
+  
+  <author>
+    <name>Sakura Yumine</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>koa return not found</title>
+    <link href="https://asadahimeka.github.io/noto/2018/04/07/koa-return-not-found/"/>
+    <id>https://asadahimeka.github.io/noto/2018/04/07/koa-return-not-found/</id>
+    <published>2018-04-07T12:20:07.000Z</published>
+    <updated>2018-04-07T12:23:21.361Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;koa-returning-‘Not-Found’&quot;&gt;&lt;a href=&quot;#koa-returning-‘Not-Found’&quot; class=&quot;headerlink&quot; title=&quot;koa returning ‘Not Found’&quot;&gt;&lt;/a&gt;koa returning ‘Not Found’&lt;/h1&gt;&lt;p&gt;最近在看koa，用koa+mysql搭了个简单demo环境后准备试一下，然后就一直返回Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是logger中间件里的&lt;code&gt;next()&lt;/code&gt;前没加&lt;code&gt;return&lt;/code&gt; 。。。[喷水]&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="node" scheme="https://asadahimeka.github.io/noto/tags/node/"/>
+    
+      <category term="nodejs" scheme="https://asadahimeka.github.io/noto/tags/nodejs/"/>
+    
+      <category term="koa" scheme="https://asadahimeka.github.io/noto/tags/koa/"/>
+    
+      <category term="not found" scheme="https://asadahimeka.github.io/noto/tags/not-found/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>利用Settings Sync插件同步VS Code设置</title>
+    <link href="https://asadahimeka.github.io/noto/2018/03/04/settings-sync-how/"/>
+    <id>https://asadahimeka.github.io/noto/2018/03/04/settings-sync-how/</id>
+    <published>2018-03-04T12:18:41.000Z</published>
+    <updated>2018-03-04T12:56:08.033Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;早就听说这个插件了，今天用了一下，确实挺方便的。通过把配置文件创建为Gist上来实现了VS Code设置的同步，下次换电脑或重装时就很便利了。&lt;br&gt;在插件商店搜索Settings Sync然后安装，重载窗口，打开命令面板，输入sync即可查看所有相关命令。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="VS Code" scheme="https://asadahimeka.github.io/noto/tags/VS-Code/"/>
+    
+      <category term="Sync" scheme="https://asadahimeka.github.io/noto/tags/Sync/"/>
+    
+      <category term="Setting" scheme="https://asadahimeka.github.io/noto/tags/Setting/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Observer Pattern</title>
+    <link href="https://asadahimeka.github.io/noto/2017/11/03/observer-pattern/"/>
+    <id>https://asadahimeka.github.io/noto/2017/11/03/observer-pattern/</id>
+    <published>2017-11-02T16:27:50.000Z</published>
+    <updated>2018-03-05T11:07:09.769Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;模式动机&quot;&gt;&lt;a href=&quot;#模式动机&quot; class=&quot;headerlink&quot; title=&quot;模式动机&quot;&gt;&lt;/a&gt;模式动机&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;建立一种&lt;strong&gt;对象与对象之间的依赖关系，一个对象发生改变时将自动通知其他对象，其他对象将相应做出反应&lt;/strong&gt;。在此，发生改变的对象称为&lt;strong&gt;观察目标&lt;/strong&gt;，而被通知的对象称为&lt;strong&gt;观察者&lt;/strong&gt;，&lt;em&gt;一个观察目标可以对应多个观察者&lt;/em&gt;，而且这些观察者之间没有相互联系，&lt;em&gt;可以根据需要增加和删除观察者，使得系统更易于扩展&lt;/em&gt;，这就是观察者模式的模式动机。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="observer" scheme="https://asadahimeka.github.io/noto/tags/observer/"/>
+    
+      <category term="design pattern" scheme="https://asadahimeka.github.io/noto/tags/design-pattern/"/>
+    
+      <category term="javascript" scheme="https://asadahimeka.github.io/noto/tags/javascript/"/>
+    
+      <category term="angular" scheme="https://asadahimeka.github.io/noto/tags/angular/"/>
+    
+      <category term="RxJS" scheme="https://asadahimeka.github.io/noto/tags/RxJS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://asadahimeka.github.io/noto/2017/11/02/hello-world/"/>
+    <id>https://asadahimeka.github.io/noto/2017/11/02/hello-world/</id>
+    <published>2017-11-02T12:05:27.713Z</published>
+    <updated>2017-11-02T16:44:28.185Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;.&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>

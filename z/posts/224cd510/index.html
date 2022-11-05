@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="最近在看 koa，用 koa+mysql 搭了个简单 demo 环境后准备试一下，然后就一直返回 Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是 logger 中间件里的next()前没加return 。[喷水]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="koa returning &#39;Not Found&#39;">
+<meta property="og:url" content="https://cocomi.cf/z/posts/224cd510/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="最近在看 koa，用 koa+mysql 搭了个简单 demo 环境后准备试一下，然后就一直返回 Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是 logger 中间件里的next()前没加return 。[喷水]">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2018-04-06T16:00:00.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="Node.js">
+<meta property="article:tag" content="Koa">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>koa returning &#39;Not Found&#39; - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="koa returning &#39;Not Found&#39;"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-04-07 00:00" pubdate>
+          2018年4月7日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">koa returning &#39;Not Found&#39;</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近在看 koa，用 koa+mysql 搭了个简单 demo 环境后准备试一下，然后就一直返回 Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是 logger 中间件里的<code>next()</code>前没加<code>return</code> 。[喷水]</p>
+<span id="more"></span>
+
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Koa</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;koa&#x27;</span>);<br><span class="hljs-keyword">const</span> route = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;koa-route&#x27;</span>);<br><span class="hljs-keyword">const</span> cors = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;koa2-cors&#x27;</span>);<br><span class="hljs-keyword">const</span> knex = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;knex&#x27;</span>);<br><br><span class="hljs-keyword">const</span> app = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Koa</span>();<br><span class="hljs-keyword">const</span> mysql = <span class="hljs-title function_">knex</span>(&#123;<br>  <span class="hljs-attr">client</span>: <span class="hljs-string">&#x27;mysql&#x27;</span>,<br>  <span class="hljs-attr">connection</span>: &#123;<br>    <span class="hljs-attr">host</span>: <span class="hljs-string">&#x27;localhost&#x27;</span>,<br>    <span class="hljs-attr">user</span>: <span class="hljs-string">&#x27;root&#x27;</span>,<br>    <span class="hljs-attr">password</span>: <span class="hljs-string">&#x27;***&#x27;</span>,<br>    <span class="hljs-attr">database</span>: <span class="hljs-string">&#x27;test&#x27;</span><br>  &#125;,<br>  <span class="hljs-attr">debug</span>: <span class="hljs-literal">true</span>,<br>  <span class="hljs-attr">pool</span>: &#123;<br>    <span class="hljs-attr">min</span>: <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">max</span>: <span class="hljs-number">7</span><br>  &#125;,<br>  <span class="hljs-attr">acquireConnectionTimeout</span>: <span class="hljs-number">10000</span>,<br>  <span class="hljs-attr">migrations</span>: &#123;<br>    <span class="hljs-attr">tableName</span>: <span class="hljs-string">&#x27;migrations&#x27;</span><br>  &#125;<br>&#125;);<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">getCodeById</span> = id =&gt; mysql.<span class="hljs-title function_">select</span>().<span class="hljs-title function_">table</span>(<span class="hljs-string">&#x27;test&#x27;</span>).<span class="hljs-title function_">where</span>(<span class="hljs-string">&#x27;a_tid&#x27;</span>, id);<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">logger</span> = (<span class="hljs-params">ctx, next</span>) =&gt; &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().toLocaleString()&#125;</span> <span class="hljs-subst">$&#123;ctx.request.method&#125;</span> <span class="hljs-subst">$&#123;ctx.request.url&#125;</span>`</span>);<br>  <span class="hljs-keyword">return</span> <span class="hljs-title function_">next</span>(); <span class="hljs-comment">// **前边要加 return**</span><br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">test</span> = <span class="hljs-keyword">async</span> ctx =&gt; &#123;<br>  <span class="hljs-keyword">let</span> res = &#123;&#125;;<br>  <span class="hljs-keyword">try</span> &#123;<br>    res.<span class="hljs-property">data</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getCodeById</span>(<span class="hljs-number">1</span>);<br>    res.<span class="hljs-property">status</span> = <span class="hljs-number">1</span>;<br>    res.<span class="hljs-property">msg</span> = <span class="hljs-string">&#x27;SUCCESS&#x27;</span>;<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;error: &#x27;</span>, error);<br>    res.<span class="hljs-property">data</span> = [];<br>    res.<span class="hljs-property">status</span> = <span class="hljs-number">0</span>;<br>    res.<span class="hljs-property">msg</span> = <span class="hljs-string">&#x27;FAIL&#x27;</span>;<br>  &#125;<br>  ctx.<span class="hljs-property">response</span>.<span class="hljs-property">body</span> = res;<br>&#125;;<br><br>app.<span class="hljs-title function_">use</span>(<span class="hljs-title function_">cors</span>());<br>app.<span class="hljs-title function_">use</span>(logger);<br>app.<span class="hljs-title function_">use</span>(route.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/test&#x27;</span>, test));<br>app.<span class="hljs-title function_">listen</span>(<span class="hljs-number">3000</span>);<br></code></pre></td></tr></table></figure>
+
+<p>后来发现已经有现成的 koa-logger 了 [#允悲]wwww</p>
+<h2 id="Answers-from-stackoverflow"><a href="#Answers-from-stackoverflow" class="headerlink" title="Answers from stackoverflow"></a>Answers from stackoverflow</h2><blockquote>
+<p><strong>It seems that if you want to use a common function as middleware, you have to return the next function</strong>.</p>
+</blockquote>
+<h3 id="Why-common-function-as-middlerware-have-to-return-the-next-function"><a href="#Why-common-function-as-middlerware-have-to-return-the-next-function" class="headerlink" title="Why common function as middlerware have to return the next function"></a>Why common function as middlerware have to return the next function</h3><blockquote>
+<p><strong>I think it’s because you have to return a promise from your middleware to work with other middlewares. The next return a promise, as you return it, you return a promise. See this issue for more discussions github.com&#x2F;koajs&#x2F;koa&#x2F;issues&#x2F;997.</strong></p>
+</blockquote>
+<h3 id="See-more："><a href="#See-more：" class="headerlink" title="See more："></a>See more：</h3><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45134394/nodejskoacant-set-headers-after-they-are-sent">nodejs(koa):Can’t set headers after they are sent</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43389601/koa2koa-routermysql-keep-returning-not-found#">koa2+koa-router+mysql keep returning ‘Not Found’</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Notes/" class="category-chain-item">Notes</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/JavaScript/">#JavaScript</a>
+      
+        <a href="/z/tags/Node-js/">#Node.js</a>
+      
+        <a href="/z/tags/Koa/">#Koa</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>koa returning &#39;Not Found&#39;</div>
+      <div>https://cocomi.cf/z/posts/224cd510/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年4月7日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/9b8e354f/" title="Emoji list">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Emoji list</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/9b0da72f/" title="利用 Settings Sync 插件同步 VS Code 设置">
+                        <span class="hidden-mobile">利用 Settings Sync 插件同步 VS Code 设置</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

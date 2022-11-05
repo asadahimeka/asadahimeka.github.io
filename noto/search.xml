@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[koa return not found]]></title>
+      <url>/noto/2018/04/07/koa-return-not-found/</url>
+      <content type="html"><![CDATA[<h1 id="koa-returning-‘Not-Found’"><a href="#koa-returning-‘Not-Found’" class="headerlink" title="koa returning ‘Not Found’"></a>koa returning ‘Not Found’</h1><p>最近在看koa，用koa+mysql搭了个简单demo环境后准备试一下，然后就一直返回Not Found，把数据库相关操作注释掉之后又好了，最后发现原因是logger中间件里的<code>next()</code>前没加<code>return</code> 。。。[喷水]<br><a id="more"></a></p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</div><div class="line"><span class="keyword">const</span> route = <span class="built_in">require</span>(<span class="string">'koa-route'</span>);</div><div class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">'koa2-cors'</span>);</div><div class="line"><span class="keyword">const</span> knex = <span class="built_in">require</span>(<span class="string">'knex'</span>);</div><div class="line"></div><div class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</div><div class="line"><span class="keyword">const</span> mysql = knex(&#123;</div><div class="line">  client: <span class="string">'mysql'</span>,</div><div class="line">  connection: &#123;</div><div class="line">    host: <span class="string">'localhost'</span>,</div><div class="line">    user: <span class="string">'root'</span>,</div><div class="line">    password: <span class="string">'***'</span>,</div><div class="line">    database: <span class="string">'test'</span></div><div class="line">  &#125;,</div><div class="line">  debug: <span class="literal">true</span>,</div><div class="line">  pool: &#123;</div><div class="line">    min: <span class="number">0</span>,</div><div class="line">    max: <span class="number">7</span></div><div class="line">  &#125;,</div><div class="line">  acquireConnectionTimeout: <span class="number">10000</span>,</div><div class="line">  migrations: &#123;</div><div class="line">    tableName: <span class="string">'migrations'</span></div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">const</span> getCodeById = <span class="function"><span class="params">id</span> =&gt;</span> mysql.select().table(<span class="string">'test'</span>).where(<span class="string">'a_tid'</span>, id);</div><div class="line"></div><div class="line"><span class="keyword">const</span> logger = <span class="function">(<span class="params">ctx, next</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>().toLocaleString()&#125;</span> <span class="subst">$&#123;ctx.request.method&#125;</span> <span class="subst">$&#123;ctx.request.url&#125;</span>`</span>);</div><div class="line">  <span class="keyword">return</span> next(); <span class="comment">// **前边要加return**</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> test = <span class="keyword">async</span> ctx =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> res = &#123;&#125;;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    res.data = <span class="keyword">await</span> getCodeById(<span class="number">1</span>);</div><div class="line">    res.status = <span class="number">1</span>;</div><div class="line">    res.msg = <span class="string">'SUCCESS'</span>;</div><div class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'error: '</span>, error);</div><div class="line">    res.data = [];</div><div class="line">    res.status = <span class="number">0</span>;</div><div class="line">    res.msg = <span class="string">'FAIL'</span>;</div><div class="line">  &#125;</div><div class="line">  ctx.response.body = res;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">app.use(cors());</div><div class="line">app.use(logger);</div><div class="line">app.use(route.get(<span class="string">'/test'</span>, test));</div><div class="line">app.listen(<span class="number">3000</span>);</div></pre></td></tr></table></figure>
+<p>后来发现已经有现成的koa-logger了[允悲]wwww</p>
+<h2 id="Answers-from-stackoverflow"><a href="#Answers-from-stackoverflow" class="headerlink" title="Answers from stackoverflow"></a>Answers from stackoverflow</h2><blockquote>
+<p><strong>It seems that if you want to use a common function as middleware, you have to return the next function</strong>.</p>
+</blockquote>
+<h3 id="Why-common-function-as-middlerware-have-to-return-the-next-function"><a href="#Why-common-function-as-middlerware-have-to-return-the-next-function" class="headerlink" title="Why common function as middlerware have to return the next function"></a>Why common function as middlerware have to return the next function</h3><blockquote>
+<p><strong>I think it’s because you have to return a promise from your middleware to work with other middlewares. The next return a promise, as you return it, you return a promise. See this issue for more discussions github.com/koajs/koa/issues/997.</strong></p>
+</blockquote>
+<h3 id="See-more："><a href="#See-more：" class="headerlink" title="See more："></a>See more：</h3><p><a href="https://stackoverflow.com/questions/45134394/nodejskoacant-set-headers-after-they-are-sent" target="_blank" rel="external">nodejs(koa):Can’t set headers after they are sent</a></p>
+<p><a href="https://stackoverflow.com/questions/43389601/koa2koa-routermysql-keep-returning-not-found#" target="_blank" rel="external">koa2+koa-router+mysql keep returning ‘Not Found’</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> node </tag>
+            
+            <tag> nodejs </tag>
+            
+            <tag> koa </tag>
+            
+            <tag> not found </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[利用Settings Sync插件同步VS Code设置]]></title>
+      <url>/noto/2018/03/04/settings-sync-how/</url>
+      <content type="html"><![CDATA[<p>早就听说这个插件了，今天用了一下，确实挺方便的。通过把配置文件创建为Gist上来实现了VS Code设置的同步，下次换电脑或重装时就很便利了。<br>在插件商店搜索Settings Sync然后安装，重载窗口，打开命令面板，输入sync即可查看所有相关命令。<br><a id="more"></a></p>
+<h2 id="可以同步的设置"><a href="#可以同步的设置" class="headerlink" title="可以同步的设置"></a>可以同步的设置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">1. VSCode 配置文件</div><div class="line">2. 键盘绑定文件</div><div class="line">3. 启动文件</div><div class="line">4. 代码片段（Snippets）</div><div class="line">5. 插件</div><div class="line">6. 工作区</div></pre></td></tr></table></figure>
+<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">1. 上传配置: Shift + Alt + U</div><div class="line">2. 下载配置 : Shift + Alt + D</div></pre></td></tr></table></figure>
+<h2 id="如何从GitHub获取-Personal-Access-Token"><a href="#如何从GitHub获取-Personal-Access-Token" class="headerlink" title="如何从GitHub获取 Personal Access Token"></a>如何从GitHub获取 Personal Access Token</h2><p>这个插件需要你GitHub账户的Personal Access Token. 可以很简单的按照如下步骤创建一个. 确保在scope里添加了<strong>Gist</strong>.</p>
+<p><strong>到 <a href="https://github.com/settings" target="_blank" rel="external">Settings</a> / <a href="https://github.com/settings/tokens" target="_blank" rel="external">Developer settings</a> / <a href="https://github.com/settings/tokens" target="_blank" rel="external">Personal access tokens</a>  来生成新的Token</strong></p>
+<p><img src="https://shanalikhan.github.io/img/github1.PNG" alt="Goto Settings / Developer settings / Personal Access Tokens"></p>
+<p><strong>从Scopes里选择Gist.</strong></p>
+<p><img src="https://shanalikhan.github.io/img/github2.PNG" alt="Select Scopes"></p>
+<p><strong>得到Access Token.</strong></p>
+<p><img src="https://shanalikhan.github.io/img/github3.PNG" alt="Get Access Token"></p>
+<blockquote>
+<p>为了将来的使用，保存好这个Token，因为只会看到一次 (i.e. 从别的机器上传配置).</p>
+</blockquote>
+<h2 id="第一次上传配置"><a href="#第一次上传配置" class="headerlink" title="第一次上传配置"></a>第一次上传配置</h2><p><strong>按下 Shift + Alt + U 来填入GitHub账号的access token.</strong></p>
+<p>按下后会自动打开GitHub设置页, 然后生成一个token来允许插件创建Gist.</p>
+<p>在窗口里输入生成的token，接着按下回车.</p>
+<p><img src="https://shanalikhan.github.io/img/upload1.png" alt="github account access token"></p>
+<p><strong>自动上传配置文件后插件会给出这个Gist的ID.</strong><br>以后需要用这个Gist ID来同步你的配置，所以跟token一样一起保存好以便在其他电脑上同步你的配置.</p>
+<p><img src="https://shanalikhan.github.io/img/upload2.png" alt="uploaded automatically"></p>
+<p>可以通过这个链接查看<strong>是否生成了Gist</strong></p>
+<blockquote>
+<p><code>https://gist.github.com/{你的GitHub用户名}/{Gist的ID}</code></p>
+</blockquote>
+<p>Gist打不开的话可以在hosts里添加</p>
+<blockquote>
+<p>192.30.253.118 gist.github.com</p>
+</blockquote>
+<p><a href="https://github.com/googlehosts/hosts/blob/master/hosts-files/hosts" target="_blank" rel="external">hosts更新地址</a></p>
+<p>这里有一个上传命令全过程的gif</p>
+<p><img src="https://media.giphy.com/media/xT9IglKxSqs2Wdwq2c/source.gif" alt="Upload"></p>
+<h2 id="下载你的配置"><a href="#下载你的配置" class="headerlink" title="下载你的配置"></a>下载你的配置</h2><p><strong>按下 Shift + Alt + D 然后会问你要GitHub Gist ID.</strong></p>
+<blockquote>
+<p>在命令面板里输入sync来上传或下载</p>
+</blockquote>
+<p><strong>输入你的GitHub Token.</strong></p>
+<p>在窗口中输入你的token然后按下回车</p>
+<p><img src="https://shanalikhan.github.io/img/upload1.png" alt="github account access token"></p>
+<p><strong>输入你的Gist ID.</strong></p>
+<p>需要输入你的Gist ID来下载之前上传过的配置</p>
+<p><img src="https://shanalikhan.github.io/img/download2.png" alt="Enter Your Gist ID"></p>
+<p><strong>配置下载完毕.</strong></p>
+<p>所有的配置文件都下载下来了</p>
+<p><img src="https://shanalikhan.github.io/img/download3.png" alt="Enter Your Gist ID"></p>
+<p>下载配置的全过程gif</p>
+<p><img src="https://media.giphy.com/media/xT9Iglsi3CS9noE8tW/source.gif" alt="Download"></p>
+<h2 id="重置-Token-Gist-Settings"><a href="#重置-Token-Gist-Settings" class="headerlink" title="重置 Token / Gist Settings"></a>重置 Token / Gist Settings</h2><blockquote>
+<p>在命令面板里输入sync然后选择Reset Token and Gist Settings</p>
+</blockquote>
+<h2 id="自动下载配置"><a href="#自动下载配置" class="headerlink" title="自动下载配置"></a>自动下载配置</h2><p>自动下载 <strong>默认是关闭的</strong></p>
+<p>打开的话要确保已经验证了token以及有可用的Gist</p>
+<p>当启动时会自动下载最新的配置文件</p>
+<p>通过命令面板里 <strong>“Sync : Advance Options &gt; Toggle Auto-Download On Startup”</strong> 来打开或关闭</p>
+<h2 id="配置发生变化时自动上传"><a href="#配置发生变化时自动上传" class="headerlink" title="配置发生变化时自动上传"></a>配置发生变化时自动上传</h2><p>自动上传 <strong>默认是关闭的</strong></p>
+<p>打开的话要确保已经验证了token以及有可用的Gist</p>
+<p>当配置改变时会自动上传最新的配置文件</p>
+<p>通过命令面板里 <strong>“Sync : Advance Options &gt; Toggle Auto-Upload on Setting Change”</strong> 来打开或关闭</p>
+<h3 id="更多查看原文Readme"><a href="#更多查看原文Readme" class="headerlink" title="更多查看原文Readme"></a>更多查看<a href="https://github.com/shanalikhan/code-settings-sync/blob/master/README.md" target="_blank" rel="external">原文Readme</a></h3>]]></content>
+      
+        
+        <tags>
+            
+            <tag> VS Code </tag>
+            
+            <tag> Sync </tag>
+            
+            <tag> Setting </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Observer Pattern]]></title>
+      <url>/noto/2017/11/03/observer-pattern/</url>
+      <content type="html"><![CDATA[<h2 id="模式动机"><a href="#模式动机" class="headerlink" title="模式动机"></a>模式动机</h2><blockquote>
+<p>建立一种<strong>对象与对象之间的依赖关系，一个对象发生改变时将自动通知其他对象，其他对象将相应做出反应</strong>。在此，发生改变的对象称为<strong>观察目标</strong>，而被通知的对象称为<strong>观察者</strong>，<em>一个观察目标可以对应多个观察者</em>，而且这些观察者之间没有相互联系，<em>可以根据需要增加和删除观察者，使得系统更易于扩展</em>，这就是观察者模式的模式动机。<br><a id="more"></a></p>
+</blockquote>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><blockquote>
+<p><strong>观察者模式</strong>(Observer Pattern)：定义对象间的一种一对多依赖关系，使得<em>每当一个对象状态发生改变</em>时，其<em>相关依赖对象皆得到通知并被自动更新</em>。观察者模式又叫做<strong>发布-订阅</strong>（Publish/Subscribe）模式、模型-视图（Model/View）模式、源-监听器（Source/Listener）模式或从属者（Dependents）模式。观察者模式是一种对象行为型模式。</p>
+</blockquote>
+<p>我们可以使用日常生活中，期刊订阅的例子来形象地解释一下上面的概念。期刊订阅包含两个主要的角色：期刊出版方和订阅者，他们之间的关系如下</p>
+<ul>
+<li><p>期刊出版方 - 负责期刊的出版和发行工作</p>
+</li>
+<li><p>订阅者 - 只需执行订阅操作，新版的期刊发布后，就会主动收到通知，如果取消订阅，以后就不会再收到通知</p>
+</li>
+</ul>
+<h3 id="Def"><a href="#Def" class="headerlink" title="Def"></a>Def</h3><ul>
+<li><p>Observer Pattern: Define a <strong>one-to-many dependency</strong> between objects so that when <strong>one object changes state, all its dependents are notified and updated automatically</strong>.</p>
+</li>
+<li><p>Frequency of use: <strong>high</strong> 5/5</p>
+</li>
+</ul>
+<h2 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h2><p><img src="https://asadahimeka.github.io/test/b/observer/img/obuml.png" alt="ObserverPattern UML" title="ObserverPattern UML"></p>
+<h2 id="模式分析"><a href="#模式分析" class="headerlink" title="模式分析"></a>模式分析</h2><ul>
+<li><p>观察者模式描述了如何建立对象与对象之间的依赖关系，如何构造满足这种需求的系统。</p>
+</li>
+<li><p>这一模式中的关键对象是观察目标和观察者，一个目标可以有任意数目的与之相依赖的观察者，<strong>一旦目标的状态发生改变，所有的观察者都将得到通知。</strong></p>
+</li>
+<li><p>作为对这个通知的响应，每个观察者都将即时更新自己的状态，以与目标状态同步，这种交互也称为<strong>发布-订阅</strong>(publish-subscribe)。目标是通知的发布者，它发出通知时并不需要知道谁是它的观察者，可以有任意数目的观察者订阅它并接收通知。</p>
+</li>
+</ul>
+<h3 id="在观察者模式中也有两个主要角色：Subject-主题-和-Observer-观察者-。它们分别对应上边例子中的期刊出版方和订阅者。"><a href="#在观察者模式中也有两个主要角色：Subject-主题-和-Observer-观察者-。它们分别对应上边例子中的期刊出版方和订阅者。" class="headerlink" title="在观察者模式中也有两个主要角色：Subject (主题) 和 Observer (观察者)。它们分别对应上边例子中的期刊出版方和订阅者。"></a>在观察者模式中也有两个主要角色：<strong>Subject (主题)</strong> 和 <strong>Observer (观察者)</strong>。它们分别对应上边例子中的期刊出版方和订阅者。</h3><p><img src="https://asadahimeka.github.io/test/b/observer/img/x.png" alt="relationship"></p>
+<h2 id="模式优缺点"><a href="#模式优缺点" class="headerlink" title="模式优缺点"></a>模式优缺点</h2><h3 id="观察者模式的优点"><a href="#观察者模式的优点" class="headerlink" title="观察者模式的优点"></a>观察者模式的优点</h3><ul>
+<li><p>观察者模式可以<strong>实现表示层和数据逻辑层的分离</strong>，并定义了稳定的消息更新传递机制，抽象了更新接口，使得可以有各种各样不同的表示层作为具体观察者角色。</p>
+</li>
+<li><p>观察者模式在观察目标和观察者之间<strong>建立一个抽象的耦合</strong>。</p>
+</li>
+<li><p>观察者模式支持广播通信。</p>
+</li>
+<li><p>观察者模式符合“开闭原则”的要求。</p>
+</li>
+</ul>
+<h3 id="观察者模式的缺点"><a href="#观察者模式的缺点" class="headerlink" title="观察者模式的缺点"></a>观察者模式的缺点</h3><ul>
+<li><p>如果一个观察目标对象有很多直接和间接的观察者的话，将所有的观察者都通知到会花费很多时间。</p>
+</li>
+<li><p>如果在观察者和观察目标之间有循环依赖的话，观察目标会触发它们之间进行循环调用，可能导致系统崩溃。</p>
+</li>
+<li><p>观察者模式没有相应的机制让观察者知道所观察的目标对象是怎么发生变化的，而仅仅只是知道观察目标发生了变化。</p>
+</li>
+</ul>
+<h2 id="模式应用-FE"><a href="#模式应用-FE" class="headerlink" title="模式应用(FE)"></a>模式应用(FE)</h2><p>在前端领域，观察者模式被广泛地使用。最常见的例子就是为 DOM 对象添加事件监听，具体示例如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"btn"</span>&gt;</span>确认<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">clickHandler</span>(<span class="params">event</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'用户已点击确认按钮!'</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"btn"</span>).addEventListener(<span class="string">'click'</span>, clickHandler);</div></pre></td></tr></table></figure>
+<p>上面代码中，我们通过 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener" target="_blank" rel="external">addEventListener</a> API 监听 button 对象上的点击事件，当用户点击按钮时，会自动执行我们的 <code>clickHandler</code> 函数。</p>
+<h2 id="模式例子"><a href="#模式例子" class="headerlink" title="模式例子"></a>模式例子</h2><p>e.g 1</p>
+<hr>
+<h3 id="Subject-类定义："><a href="#Subject-类定义：" class="headerlink" title="Subject 类定义："></a>Subject 类定义：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>() &#123;</div><div class="line">        <span class="keyword">this</span>.observerCollection = [];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    registerObserver(observer) &#123;</div><div class="line">        <span class="keyword">this</span>.observerCollection.push(observer);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    unregisterObserver(observer) &#123;</div><div class="line">        <span class="keyword">let</span> index = <span class="keyword">this</span>.observerCollection.indexOf(observer);</div><div class="line">        <span class="keyword">if</span>(index &gt;= <span class="number">0</span>) <span class="keyword">this</span>.observerCollection.splice(index, <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    notifyObservers() &#123;</div><div class="line">        <span class="keyword">this</span>.observerCollection.forEach(<span class="function">(<span class="params">observer</span>)=&gt;</span>observer.notify());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Observer-类定义："><a href="#Observer-类定义：" class="headerlink" title="Observer 类定义："></a>Observer 类定义：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">constructor</span>(name) &#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    notify() &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> has been notified.`</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> subject = <span class="keyword">new</span> Subject(); <span class="comment">// 创建主题对象</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> observer1 = <span class="keyword">new</span> Observer(<span class="string">'semlinker'</span>); <span class="comment">// 创建观察者A - 'semlinker'</span></div><div class="line"><span class="keyword">let</span> observer2 = <span class="keyword">new</span> Observer(<span class="string">'lolo'</span>); <span class="comment">// 创建观察者B - 'lolo'</span></div><div class="line"></div><div class="line">subject.registerObserver(observer1); <span class="comment">// 注册观察者A</span></div><div class="line">subject.registerObserver(observer2); <span class="comment">// 注册观察者B</span></div><div class="line"></div><div class="line">subject.notifyObservers(); <span class="comment">// 通知观察者</span></div><div class="line"></div><div class="line">subject.unregisterObserver(observer1); <span class="comment">// 移除观察者A</span></div><div class="line"></div><div class="line">subject.notifyObservers(); <span class="comment">// 验证是否成功移除</span></div></pre></td></tr></table></figure>
+<h3 id="以上代码成功运行后控制台的输出结果："><a href="#以上代码成功运行后控制台的输出结果：" class="headerlink" title="以上代码成功运行后控制台的输出结果："></a>以上代码成功运行后控制台的输出结果：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">semlinker has been notified. <span class="comment"># 输出一次</span></div><div class="line">lolo has been notified. <span class="comment"># 输出两次</span></div><div class="line">lolo has been notified.</div></pre></td></tr></table></figure>
+<p>e.g 2</p>
+<hr>
+<h3 id="猫、狗与老鼠"><a href="#猫、狗与老鼠" class="headerlink" title="猫、狗与老鼠"></a>猫、狗与老鼠</h3><blockquote>
+<p>假设猫是老鼠和狗的观察目标，老鼠和狗是观察者，猫叫老鼠跑，狗也跟着叫，使用观察者模式描述该过程。</p>
+</blockquote>
+<ul>
+<li>UML</li>
+</ul>
+<p><img src="https://asadahimeka.github.io/test/b/observer/img/cat.png" alt="Cat"></p>
+<h4 id="Subject"><a href="#Subject" class="headerlink" title="Subject"></a>Subject</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> MySubject &#123;</div><div class="line">    <span class="keyword">protected</span> observerCollection: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt;;<span class="comment">//存放觀察者</span></div><div class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</div><div class="line">        <span class="keyword">this</span>.observerCollection = [];</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//注册方法</span></div><div class="line">    <span class="keyword">public</span> attach(observer: MyObserver): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="keyword">this</span>.observerCollection.push(observer);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//注销方法</span></div><div class="line">    <span class="keyword">public</span> detach(observer: MyObserver): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="keyword">let</span> index = <span class="keyword">this</span>.observerCollection.indexOf(observer);</div><div class="line">        <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) <span class="keyword">this</span>.observerCollection.splice(index, <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> cry(): <span class="built_in">void</span>;<span class="comment">//抽象通知方法</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">interface</span> MyObserver &#123;</div><div class="line">    response(): <span class="built_in">void</span>; <span class="comment">//抽象响应方法</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Cat"><a href="#Cat" class="headerlink" title="Cat"></a>Cat</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Cat <span class="keyword">extends</span> MySubject &#123;</div><div class="line">    <span class="keyword">public</span> cry(): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">"------"</span>);</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">"猫叫！"</span>);</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">"------"</span>);</div><div class="line">        <span class="keyword">this</span>.observerCollection.forEach(<span class="function">(<span class="params">obs: MyObserver</span>) =&gt;</span> obs.response());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Dog"><a href="#Dog" class="headerlink" title="Dog"></a>Dog</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Dog <span class="keyword">implements</span> MyObserver &#123;</div><div class="line">    <span class="keyword">public</span> response(): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">"狗跟着叫！"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Mouse"><a href="#Mouse" class="headerlink" title="Mouse"></a>Mouse</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Mouse <span class="keyword">implements</span> MyObserver &#123;</div><div class="line">    <span class="keyword">protected</span> name: <span class="built_in">string</span>;</div><div class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span></span>) &#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> response(): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">`老鼠<span class="subst">$&#123;this.name&#125;</span>努力逃跑！`</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Pig"><a href="#Pig" class="headerlink" title="Pig"></a>Pig</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Pig <span class="keyword">implements</span> MyObserver &#123;</div><div class="line">    <span class="keyword">public</span> response(): <span class="built_in">void</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">"猪没有反应！"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="client"><a href="#client" class="headerlink" title="client"></a>client</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> cat = <span class="keyword">new</span> Cat();</div><div class="line"></div><div class="line"><span class="keyword">let</span> mouse1 = <span class="keyword">new</span> Mouse(<span class="string">'m1'</span>);</div><div class="line"><span class="keyword">let</span> mouse2 = <span class="keyword">new</span> Mouse(<span class="string">'m2'</span>);</div><div class="line"><span class="keyword">let</span> dog = <span class="keyword">new</span> Dog();</div><div class="line"></div><div class="line">cat.attach(mouse1);</div><div class="line">cat.attach(mouse2);</div><div class="line">cat.attach(dog);</div><div class="line"></div><div class="line"><span class="keyword">let</span> pig = <span class="keyword">new</span> Pig();</div><div class="line">cat.attach(pig);</div><div class="line"></div><div class="line">cat.cry();</div><div class="line"></div><div class="line">cat.detach(mouse2);</div><div class="line">cat.cry();</div></pre></td></tr></table></figure>
+<h4 id="控制台输出"><a href="#控制台输出" class="headerlink" title="控制台输出"></a>控制台输出</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">------</div><div class="line">猫叫！</div><div class="line">------</div><div class="line">老鼠m1努力逃跑！</div><div class="line">老鼠m2努力逃跑！</div><div class="line">狗跟着叫！</div><div class="line">猪没有反应！</div><div class="line">------</div><div class="line">猫叫！</div><div class="line">------</div><div class="line">老鼠m1努力逃跑！</div><div class="line">狗跟着叫！</div><div class="line">猪没有反应！</div></pre></td></tr></table></figure>
+<h2 id="Observable-RxJS"><a href="#Observable-RxJS" class="headerlink" title="Observable(RxJS)"></a><strong>Observable(RxJS)</strong></h2><p>RxJS 是基于观察者模式和迭代器模式以函数式编程思维来实现的。RxJS 中含有两个基本概念：Observables 与 Observer。Observables 作为被观察者，是一个值或事件的流集合；而 Observer 则作为观察者，根据 Observables 进行处理。</p>
+<p>Observables 与 Observer 之间的订阅发布关系(观察者模式) 如下：</p>
+<ul>
+<li><p><strong>订阅</strong>：Observer 通过 Observable 提供的 subscribe() 方法订阅 Observable。</p>
+</li>
+<li><p><strong>发布</strong>：Observable 通过回调 next 方法向 Observer 发布事件。</p>
+</li>
+</ul>
+<h3 id="Observer-观察者-是一个包含三个方法的对象，每当-Observable-触发事件时，便会自动调用观察者的对应方法。"><a href="#Observer-观察者-是一个包含三个方法的对象，每当-Observable-触发事件时，便会自动调用观察者的对应方法。" class="headerlink" title="Observer (观察者) 是一个包含三个方法的对象，每当 Observable 触发事件时，便会自动调用观察者的对应方法。"></a>Observer (观察者) 是一个包含三个方法的对象，每当 Observable 触发事件时，便会自动调用观察者的对应方法。</h3><p><a href="http://reactivex.io/rxjs/class/es6/MiscJSDoc.js~ObserverDoc.html" target="_blank" rel="external">Observer 接口定义</a>:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">interface</span> Observer&lt;T&gt; &#123;</div><div class="line">  closed?: <span class="built_in">boolean</span>; <span class="comment">// 标识是否已经取消对Observable对象的订阅</span></div><div class="line">  next: <span class="function">(<span class="params">value: T</span>) =&gt;</span> <span class="built_in">void</span>;</div><div class="line">  error: <span class="function">(<span class="params">err: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>;</div><div class="line">  complete: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Observer 中的三个方法的作用：</p>
+<ul>
+<li><p>next - 每当 Observable 发送新值的时候，next 方法会被调用</p>
+</li>
+<li><p>error - 当 Observable 内发生错误时，error 方法就会被调用</p>
+</li>
+<li><p>complete - 当 Observable 数据终止后，complete 方法会被调用。在调用 complete 方法之后，next 方法就不会再次被调用</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>complete 方法执行后，next 就会失效，所以不会输出 not work。</strong></p>
+</blockquote>
+<p>另外观察者可以不用同时包含 next、complete、error 三种方法，它可以只包含一个 next 方法。</p>
+<p>可以在调用 Observable 对象的 subscribe 方法时，依次传入 next、error、complete 三个函数，来创建观察者：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">observable.subscribe(</div><div class="line">    value =&gt; &#123; <span class="built_in">console</span>.log(value); &#125;,</div><div class="line">    error =&gt; &#123; <span class="built_in">console</span>.log(<span class="string">'Error: '</span>, error); &#125;,</div><div class="line">    () =&gt; &#123; <span class="built_in">console</span>.log(<span class="string">'complete'</span>); &#125;</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>Angular中接收URL查询参数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ComComponent</span> <span class="title">implements</span> <span class="title">OnInit</span>, <span class="title">OnDestroy</span> </span>&#123;</div><div class="line"></div><div class="line">  private sub : Subscription;</div><div class="line"></div><div class="line">  <span class="keyword">constructor</span>(</div><div class="line">    private activatedRoute: ActivatedRoute,</div><div class="line">  ) &#123; &#125;</div><div class="line"></div><div class="line">  ngOnInit() &#123;</div><div class="line">    <span class="comment">//监听变化</span></div><div class="line">    <span class="keyword">this</span>.sub = <span class="keyword">this</span>.activatedRoute.queryParamMap</div><div class="line">        .subscribe(<span class="function"><span class="params">p</span> =&gt;</span> &#123;</div><div class="line">            <span class="built_in">console</span>.log(p.get(<span class="string">'url'</span>))</div><div class="line">        &#125;)</div><div class="line">    <span class="comment">//只用一次的话用快照</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.route.snapshot.queryParamMap.get(<span class="string">'url'</span>));</div><div class="line">  &#125;</div><div class="line">  ngOnDestroy()&#123;</div><div class="line">    <span class="keyword">this</span>.sub.unsubscribe();</div><div class="line">    <span class="comment">//销毁之后要取消订阅防止内存泄露</span></div><div class="line">    <span class="comment">//不过ActivatedRoute可以不需要unsubscribe，ng会智能处理</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="推数据与拉数据"><a href="#推数据与拉数据" class="headerlink" title="推数据与拉数据"></a><strong>推数据与拉数据</strong></h2><p>Pull 和 Push 是数据生产者和数据的消费者两种不同的交流方式。</p>
+<p><strong>什么是Pull?</strong></p>
+<p>在 “拉” 体系中，数据的消费者决定何时从数据生产者那里获取数据，而生产者自身并不会意识到什么时候数据将会被发送给消费者。</p>
+<p>每一个 JavaScript 函数都是一个 “拉” 体系，函数是数据的生产者，调用函数的代码通过 ‘’拉出” 一个单一的返回值来消费该数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> add = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</div><div class="line"><span class="keyword">let</span> sum = add(<span class="number">3</span>, <span class="number">4</span>);</div></pre></td></tr></table></figure>
+<p>ES6介绍了 <a href="http://es6.ruanyifeng.com/#docs/iterator" target="_blank" rel="external">iterator迭代器</a> 和 <a href="http://es6.ruanyifeng.com/#docs/generator" target="_blank" rel="external">Generator</a>生成器 — 另一种 “拉” 体系，调用 iterator.next() 的代码是消费者，可从中拉取多个值。</p>
+<p><strong>什么是Push?</strong></p>
+<p>在 “推” 体系中，数据的生产者决定何时发送数据给消费者，消费者不会在接收数据之前意识到它将要接收这个数据。</p>
+<p><a href="http://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="external">Promise(承诺)</a> 是当今 JS 中最常见的 “推” 体系，一个Promise (数据的生产者)发送一个 resolved value (成功状态的值)来执行一个回调(数据消费者)，但是不同于函数的地方的是：Promise 决定着何时数据才被推送至这个回调函数。</p>
+<p>RxJS 引入了 Observables (可观察对象)，一个全新的 “推” 体系。一个可观察对象是一个产生多值的生产者，当产生新数据的时候，会主动 “推送给” Observer (观察者)。</p>
+<h3 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h3><ul>
+<li>返回单个值</li>
+<li>不可取消的</li>
+</ul>
+<h3 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h3><ul>
+<li>随着时间的推移发出多个值</li>
+<li>可以取消的</li>
+<li>支持 map、filter、reduce 等操作符</li>
+<li>延迟执行，当订阅的时候才会开始执行</li>
+</ul>
+<p><img src="https://asadahimeka.github.io/test/b/observer/img/pp.jpg" alt="PullPush"></p>
+<h2 id="REF"><a href="#REF" class="headerlink" title="REF"></a>REF</h2><p><a href="http://blog.csdn.net/lovelion/article/details/7862349" target="_blank" rel="external">Observer Pattern 课件 - 刘伟(CSU)</a></p>
+<p><a href="https://segmentfault.com/a/1190000008809168" target="_blank" rel="external">Observable 详解</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> observer </tag>
+            
+            <tag> design pattern </tag>
+            
+            <tag> javascript </tag>
+            
+            <tag> angular </tag>
+            
+            <tag> RxJS </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Hello World]]></title>
+      <url>/noto/2017/11/02/hello-world/</url>
+      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.<br><a id="more"></a></p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+      
+        
+    </entry>
+    
+  
+  
+</search>

@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="模式动机 建立一种对象与对象之间的依赖关系，一个对象发生改变时将自动通知其他对象，其他对象将相应做出反应。在此，发生改变的对象称为观察目标，而被通知的对象称为观察者，一个观察目标可以对应多个观察者，而且这些观察者之间没有相互联系，可以根据需要增加和删除观察者，使得系统更易于扩展，这就是观察者模式的模式动机。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Observer Pattern （观察者模式）">
+<meta property="og:url" content="https://cocomi.cf/z/posts/beda1d8f/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="模式动机 建立一种对象与对象之间的依赖关系，一个对象发生改变时将自动通知其他对象，其他对象将相应做出反应。在此，发生改变的对象称为观察目标，而被通知的对象称为观察者，一个观察目标可以对应多个观察者，而且这些观察者之间没有相互联系，可以根据需要增加和删除观察者，使得系统更易于扩展，这就是观察者模式的模式动机。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/6afca6c386f36e8d741441e1e6e49223_4676297406069797186.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/ac36f8db78687f44dc288b34d2eb04b1_144564271825817954.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/0a2730de86ac8ac646f54908f85b0677_6930268922353687629.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/453964c7c356cd70a02c3c860bce5051_4555920067121677757.jpg">
+<meta property="article:published_time" content="2017-11-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-11-02T16:00:00.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="Design Pattern">
+<meta property="article:tag" content="Observer Pattern">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/6afca6c386f36e8d741441e1e6e49223_4676297406069797186.png">
+  
+  
+  
+  <title>Observer Pattern （观察者模式） - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Observer Pattern （观察者模式）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-11-03 00:00" pubdate>
+          2017年11月3日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          55 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Observer Pattern （观察者模式）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="模式动机"><a href="#模式动机" class="headerlink" title="模式动机"></a>模式动机</h2><blockquote>
+<p>建立一种<strong>对象与对象之间的依赖关系，一个对象发生改变时将自动通知其他对象，其他对象将相应做出反应</strong>。在此，发生改变的对象称为<strong>观察目标</strong>，而被通知的对象称为<strong>观察者</strong>，<em>一个观察目标可以对应多个观察者</em>，而且这些观察者之间没有相互联系，<em>可以根据需要增加和删除观察者，使得系统更易于扩展</em>，这就是观察者模式的模式动机。</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><blockquote>
+<p><strong>观察者模式</strong> (Observer Pattern)：定义对象间的一种一对多依赖关系，使得<em>每当一个对象状态发生改变</em>时，其<em>相关依赖对象皆得到通知并被自动更新</em>。观察者模式又叫做<strong>发布-订阅</strong>（Publish&#x2F;Subscribe）模式、模型-视图（Model&#x2F;View）模式、源-监听器（Source&#x2F;Listener）模式或从属者（Dependents）模式。观察者模式是一种对象行为型模式。</p>
+</blockquote>
+<p>我们可以使用日常生活中，期刊订阅的例子来形象地解释一下上面的概念。期刊订阅包含两个主要的角色：期刊出版方和订阅者，他们之间的关系如下</p>
+<ul>
+<li><p>期刊出版方 - 负责期刊的出版和发行工作</p>
+</li>
+<li><p>订阅者 - 只需执行订阅操作，新版的期刊发布后，就会主动收到通知，如果取消订阅，以后就不会再收到通知</p>
+</li>
+</ul>
+<h3 id="Def"><a href="#Def" class="headerlink" title="Def"></a>Def</h3><ul>
+<li><p>Observer Pattern: Define a <strong>one-to-many dependency</strong> between objects so that when <strong>one object changes state, all its dependents are notified and updated automatically</strong>.</p>
+</li>
+<li><p>Frequency of use: <strong>high</strong> 5&#x2F;5</p>
+</li>
+</ul>
+<h2 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h2><p><img src="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/6afca6c386f36e8d741441e1e6e49223_4676297406069797186.png" srcset="/z/img/loading.gif" lazyload alt="ObserverPattern UML" title="ObserverPattern UML"></p>
+<h2 id="模式分析"><a href="#模式分析" class="headerlink" title="模式分析"></a>模式分析</h2><ul>
+<li><p>观察者模式描述了如何建立对象与对象之间的依赖关系，如何构造满足这种需求的系统。</p>
+</li>
+<li><p>这一模式中的关键对象是观察目标和观察者，一个目标可以有任意数目的与之相依赖的观察者，<strong>一旦目标的状态发生改变，所有的观察者都将得到通知。</strong></p>
+</li>
+<li><p>作为对这个通知的响应，每个观察者都将即时更新自己的状态，以与目标状态同步，这种交互也称为<strong>发布-订阅</strong> (publish-subscribe)。目标是通知的发布者，它发出通知时并不需要知道谁是它的观察者，可以有任意数目的观察者订阅它并接收通知。</p>
+</li>
+</ul>
+<h3 id="在观察者模式中也有两个主要角色：Subject-（主题）-和-Observer-（观察者）-。它们分别对应上边例子中的期刊出版方和订阅者。"><a href="#在观察者模式中也有两个主要角色：Subject-（主题）-和-Observer-（观察者）-。它们分别对应上边例子中的期刊出版方和订阅者。" class="headerlink" title="在观察者模式中也有两个主要角色：Subject （主题） 和 Observer （观察者） 。它们分别对应上边例子中的期刊出版方和订阅者。"></a>在观察者模式中也有两个主要角色：<strong>Subject （主题）</strong> 和 <strong>Observer （观察者）</strong> 。它们分别对应上边例子中的期刊出版方和订阅者。</h3><p><img src="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/ac36f8db78687f44dc288b34d2eb04b1_144564271825817954.png" srcset="/z/img/loading.gif" lazyload alt="relationship"></p>
+<h2 id="模式优缺点"><a href="#模式优缺点" class="headerlink" title="模式优缺点"></a>模式优缺点</h2><h3 id="观察者模式的优点"><a href="#观察者模式的优点" class="headerlink" title="观察者模式的优点"></a>观察者模式的优点</h3><ul>
+<li><p>观察者模式可以<strong>实现表示层和数据逻辑层的分离</strong>，并定义了稳定的消息更新传递机制，抽象了更新接口，使得可以有各种各样不同的表示层作为具体观察者角色。</p>
+</li>
+<li><p>观察者模式在观察目标和观察者之间<strong>建立一个抽象的耦合</strong>。</p>
+</li>
+<li><p>观察者模式支持广播通信。</p>
+</li>
+<li><p>观察者模式符合“开闭原则”的要求。</p>
+</li>
+</ul>
+<h3 id="观察者模式的缺点"><a href="#观察者模式的缺点" class="headerlink" title="观察者模式的缺点"></a>观察者模式的缺点</h3><ul>
+<li><p>如果一个观察目标对象有很多直接和间接的观察者的话，将所有的观察者都通知到会花费很多时间。</p>
+</li>
+<li><p>如果在观察者和观察目标之间有循环依赖的话，观察目标会触发它们之间进行循环调用，可能导致系统崩溃。</p>
+</li>
+<li><p>观察者模式没有相应的机制让观察者知道所观察的目标对象是怎么发生变化的，而仅仅只是知道观察目标发生了变化。</p>
+</li>
+</ul>
+<h2 id="模式应用-FE"><a href="#模式应用-FE" class="headerlink" title="模式应用 (FE)"></a>模式应用 (FE)</h2><p>在前端领域，观察者模式被广泛地使用。最常见的例子就是为 DOM 对象添加事件监听，具体示例如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;btn&quot;</span>&gt;</span>确认<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">clickHandler</span>(<span class="hljs-params">event</span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;用户已点击确认按钮！&#x27;</span>);<br>&#125;<br><br><span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;btn&quot;</span>).<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, clickHandler);<br></code></pre></td></tr></table></figure>
+
+<p>上面代码中，我们通过 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener">addEventListener</a> API 监听 button 对象上的点击事件，当用户点击按钮时，会自动执行我们的 <code>clickHandler</code> 函数。</p>
+<h2 id="模式例子"><a href="#模式例子" class="headerlink" title="模式例子"></a>模式例子</h2><p>e.g 1</p>
+<h3 id="Subject-类定义："><a href="#Subject-类定义：" class="headerlink" title="Subject 类定义："></a>Subject 类定义：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Subject</span> &#123;<br>    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span> = [];<br>    &#125;<br><br>    <span class="hljs-title function_">registerObserver</span>(<span class="hljs-params">observer</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">push</span>(observer);<br>    &#125;<br><br>    <span class="hljs-title function_">unregisterObserver</span>(<span class="hljs-params">observer</span>) &#123;<br>        <span class="hljs-keyword">let</span> index = <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">indexOf</span>(observer);<br>        <span class="hljs-keyword">if</span>(index &gt;= <span class="hljs-number">0</span>) <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);<br>    &#125;<br><br>    <span class="hljs-title function_">notifyObservers</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">observer</span>)=&gt;</span>observer.<span class="hljs-title function_">notify</span>());<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Observer-类定义："><a href="#Observer-类定义：" class="headerlink" title="Observer 类定义："></a>Observer 类定义：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Observer</span> &#123;<br><br>    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;<br>    &#125;<br><br>    <span class="hljs-title function_">notify</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.name&#125;</span> has been notified.`</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">let</span> subject = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Subject</span>(); <span class="hljs-comment">// 创建主题对象</span><br><br><span class="hljs-keyword">let</span> observer1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>(<span class="hljs-string">&#x27;semlinker&#x27;</span>); <span class="hljs-comment">// 创建观察者 A - &#x27;semlinker&#x27;</span><br><span class="hljs-keyword">let</span> observer2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>(<span class="hljs-string">&#x27;lolo&#x27;</span>); <span class="hljs-comment">// 创建观察者 B - &#x27;lolo&#x27;</span><br><br>subject.<span class="hljs-title function_">registerObserver</span>(observer1); <span class="hljs-comment">// 注册观察者 A</span><br>subject.<span class="hljs-title function_">registerObserver</span>(observer2); <span class="hljs-comment">// 注册观察者 B</span><br><br>subject.<span class="hljs-title function_">notifyObservers</span>(); <span class="hljs-comment">// 通知观察者</span><br><br>subject.<span class="hljs-title function_">unregisterObserver</span>(observer1); <span class="hljs-comment">// 移除观察者 A</span><br><br>subject.<span class="hljs-title function_">notifyObservers</span>(); <span class="hljs-comment">// 验证是否成功移除</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="以上代码成功运行后控制台的输出结果："><a href="#以上代码成功运行后控制台的输出结果：" class="headerlink" title="以上代码成功运行后控制台的输出结果："></a>以上代码成功运行后控制台的输出结果：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">semlinker has been notified. <span class="hljs-comment"># 输出一次</span><br>lolo has been notified. <span class="hljs-comment"># 输出两次</span><br>lolo has been notified.<br></code></pre></td></tr></table></figure>
+
+<p>e.g 2</p>
+<h3 id="猫、狗与老鼠"><a href="#猫、狗与老鼠" class="headerlink" title="猫、狗与老鼠"></a>猫、狗与老鼠</h3><blockquote>
+<p>假设猫是老鼠和狗的观察目标，老鼠和狗是观察者，猫叫老鼠跑，狗也跟着叫，使用观察者模式描述该过程。</p>
+</blockquote>
+<ul>
+<li>UML</li>
+</ul>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/0a2730de86ac8ac646f54908f85b0677_6930268922353687629.png" srcset="/z/img/loading.gif" lazyload alt="Cat"></p>
+<h4 id="Subject"><a href="#Subject" class="headerlink" title="Subject"></a>Subject</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MySubject</span> &#123;<br>    <span class="hljs-keyword">protected</span> <span class="hljs-attr">observerCollection</span>: <span class="hljs-title class_">Array</span>&lt;<span class="hljs-built_in">any</span>&gt;;<span class="hljs-comment">//存放觀察者</span><br>    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span> = [];<br>    &#125;<br>    <span class="hljs-comment">//注册方法</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">attach</span>(<span class="hljs-attr">observer</span>: <span class="hljs-title class_">MyObserver</span>): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">push</span>(observer);<br>    &#125;<br>    <span class="hljs-comment">//注销方法</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">detach</span>(<span class="hljs-attr">observer</span>: <span class="hljs-title class_">MyObserver</span>): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-keyword">let</span> index = <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">indexOf</span>(observer);<br>        <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">0</span>) <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-title function_">cry</span>(): <span class="hljs-built_in">void</span>;<span class="hljs-comment">//抽象通知方法</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">MyObserver</span> &#123;<br>    <span class="hljs-title function_">response</span>(): <span class="hljs-built_in">void</span>; <span class="hljs-comment">//抽象响应方法</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Cat"><a href="#Cat" class="headerlink" title="Cat"></a>Cat</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Cat</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">MySubject</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">cry</span>(): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;------&quot;</span>);<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;猫叫！&quot;</span>);<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;------&quot;</span>);<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">observerCollection</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">obs: MyObserver</span>) =&gt;</span> obs.<span class="hljs-title function_">response</span>());<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Dog"><a href="#Dog" class="headerlink" title="Dog"></a>Dog</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MyObserver</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">response</span>(): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;狗跟着叫！&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Mouse"><a href="#Mouse" class="headerlink" title="Mouse"></a>Mouse</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Mouse</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MyObserver</span> &#123;<br>    <span class="hljs-keyword">protected</span> <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name: <span class="hljs-built_in">string</span></span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">response</span>(): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`老鼠<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.name&#125;</span>努力逃跑！`</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Pig"><a href="#Pig" class="headerlink" title="Pig"></a>Pig</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Pig</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MyObserver</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">response</span>(): <span class="hljs-built_in">void</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;猪没有反应！&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="client"><a href="#client" class="headerlink" title="client"></a>client</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">let</span> cat = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Cat</span>();<br><br><span class="hljs-keyword">let</span> mouse1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mouse</span>(<span class="hljs-string">&#x27;m1&#x27;</span>);<br><span class="hljs-keyword">let</span> mouse2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mouse</span>(<span class="hljs-string">&#x27;m2&#x27;</span>);<br><span class="hljs-keyword">let</span> dog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>();<br><br>cat.<span class="hljs-title function_">attach</span>(mouse1);<br>cat.<span class="hljs-title function_">attach</span>(mouse2);<br>cat.<span class="hljs-title function_">attach</span>(dog);<br><br><span class="hljs-keyword">let</span> pig = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Pig</span>();<br>cat.<span class="hljs-title function_">attach</span>(pig);<br><br>cat.<span class="hljs-title function_">cry</span>();<br><br>cat.<span class="hljs-title function_">detach</span>(mouse2);<br>cat.<span class="hljs-title function_">cry</span>();<br></code></pre></td></tr></table></figure>
+
+<h4 id="控制台输出"><a href="#控制台输出" class="headerlink" title="控制台输出"></a>控制台输出</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">------<br>猫叫！<br>------<br>老鼠 m1 努力逃跑！<br>老鼠 m2 努力逃跑！<br>狗跟着叫！<br>猪没有反应！<br>------<br>猫叫！<br>------<br>老鼠 m1 努力逃跑！<br>狗跟着叫！<br>猪没有反应！<br></code></pre></td></tr></table></figure>
+
+<h2 id="Observable-RxJS"><a href="#Observable-RxJS" class="headerlink" title="Observable(RxJS)"></a><strong>Observable(RxJS)</strong></h2><p>RxJS 是基于观察者模式和迭代器模式以函数式编程思维来实现的。RxJS 中含有两个基本概念：Observables 与 Observer。Observables 作为被观察者，是一个值或事件的流集合；而 Observer 则作为观察者，根据 Observables 进行处理。</p>
+<p>Observables 与 Observer 之间的订阅发布关系（观察者模式） 如下：</p>
+<ul>
+<li><p><strong>订阅</strong> ：Observer 通过 Observable 提供的 subscribe() 方法订阅 Observable。</p>
+</li>
+<li><p><strong>发布</strong> ：Observable 通过回调 next 方法向 Observer 发布事件。</p>
+</li>
+</ul>
+<h3 id="Observer-（观察者）-是一个包含三个方法的对象，每当-Observable-触发事件时，便会自动调用观察者的对应方法。"><a href="#Observer-（观察者）-是一个包含三个方法的对象，每当-Observable-触发事件时，便会自动调用观察者的对应方法。" class="headerlink" title="Observer （观察者） 是一个包含三个方法的对象，每当 Observable 触发事件时，便会自动调用观察者的对应方法。"></a>Observer （观察者） 是一个包含三个方法的对象，每当 Observable 触发事件时，便会自动调用观察者的对应方法。</h3><p><a target="_blank" rel="noopener" href="http://reactivex.io/rxjs/class/es6/MiscJSDoc.js~ObserverDoc.html">Observer 接口定义</a>:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">Observer</span>&lt;T&gt; &#123;<br>  closed?: <span class="hljs-built_in">boolean</span>; <span class="hljs-comment">// 标识是否已经取消对 Observable 对象的订阅</span><br>  <span class="hljs-attr">next</span>: <span class="hljs-function">(<span class="hljs-params">value: T</span>) =&gt;</span> <span class="hljs-built_in">void</span>;<br>  <span class="hljs-attr">error</span>: <span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">any</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;<br>  <span class="hljs-attr">complete</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">void</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Observer 中的三个方法的作用：</p>
+<ul>
+<li><p>next - 每当 Observable 发送新值的时候，next 方法会被调用</p>
+</li>
+<li><p>error - 当 Observable 内发生错误时，error 方法就会被调用</p>
+</li>
+<li><p>complete - 当 Observable 数据终止后，complete 方法会被调用。在调用 complete 方法之后，next 方法就不会再次被调用</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>complete 方法执行后，next 就会失效，所以不会输出 not work。</strong></p>
+</blockquote>
+<p>另外观察者可以不用同时包含 next、complete、error 三种方法，它可以只包含一个 next 方法。</p>
+<p>可以在调用 Observable 对象的 subscribe 方法时，依次传入 next、error、complete 三个函数，来创建观察者：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript">observable.<span class="hljs-title function_">subscribe</span>(<br>    <span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span> &#123; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(value); &#125;,<br>    <span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> &#123; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Error: &#x27;</span>, error); &#125;,<br>    <span class="hljs-function">() =&gt;</span> &#123; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;complete&#x27;</span>); &#125;<br>);<br></code></pre></td></tr></table></figure>
+
+<p>Angular 中接收 URL 查询参数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ComComponent</span> implements <span class="hljs-title class_">OnInit</span>, <span class="hljs-title class_">OnDestroy</span> &#123;<br><br>  private sub : <span class="hljs-title class_">Subscription</span>;<br><br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span><br><span class="hljs-params">    private activatedRoute: ActivatedRoute,</span><br><span class="hljs-params">  </span>) &#123; &#125;<br><br>  <span class="hljs-title function_">ngOnInit</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-comment">//监听变化</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">sub</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">activatedRoute</span>.<span class="hljs-property">queryParamMap</span><br>        .<span class="hljs-title function_">subscribe</span>(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> &#123;<br>            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(p.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;url&#x27;</span>))<br>        &#125;)<br>    <span class="hljs-comment">//只用一次的话用快照</span><br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">route</span>.<span class="hljs-property">snapshot</span>.<span class="hljs-property">queryParamMap</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;url&#x27;</span>));<br>  &#125;<br>  <span class="hljs-title function_">ngOnDestroy</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">sub</span>.<span class="hljs-title function_">unsubscribe</span>();<br>    <span class="hljs-comment">//销毁之后要取消订阅防止内存泄露</span><br>    <span class="hljs-comment">//不过 ActivatedRoute 可以不需要 unsubscribe，ng 会智能处理</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="推数据与拉数据"><a href="#推数据与拉数据" class="headerlink" title="推数据与拉数据"></a><strong>推数据与拉数据</strong></h2><p>Pull 和 Push 是数据生产者和数据的消费者两种不同的交流方式。</p>
+<p><strong>什么是 Pull?</strong></p>
+<p>在 “拉” 体系中，数据的消费者决定何时从数据生产者那里获取数据，而生产者自身并不会意识到什么时候数据将会被发送给消费者。</p>
+<p>每一个 JavaScript 函数都是一个 “拉” 体系，函数是数据的生产者，调用函数的代码通过 ‘’拉出” 一个单一的返回值来消费该数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> <span class="hljs-title function_">add</span> = (<span class="hljs-params">a, b</span>) =&gt; a + b;<br><span class="hljs-keyword">let</span> sum = <span class="hljs-title function_">add</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>);<br></code></pre></td></tr></table></figure>
+
+<p>ES6 介绍了 <a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/iterator">iterator 迭代器</a> 和 <a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/generator">Generator</a> 生成器 — 另一种 “拉” 体系，调用 iterator.next() 的代码是消费者，可从中拉取多个值。</p>
+<p><strong>什么是 Push?</strong></p>
+<p>在 “推” 体系中，数据的生产者决定何时发送数据给消费者，消费者不会在接收数据之前意识到它将要接收这个数据。</p>
+<p><a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/promise">Promise（承诺）</a> 是当今 JS 中最常见的 “推” 体系，一个 Promise （数据的生产者）发送一个 resolved value （成功状态的值）来执行一个回调（数据消费者），但是不同于函数的地方的是：Promise 决定着何时数据才被推送至这个回调函数。</p>
+<p>RxJS 引入了 Observables （可观察对象），一个全新的 “推” 体系。一个可观察对象是一个产生多值的生产者，当产生新数据的时候，会主动 “推送给” Observer （观察者）。</p>
+<h3 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h3><ul>
+<li>返回单个值</li>
+<li>不可取消的</li>
+</ul>
+<h3 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h3><ul>
+<li>随着时间的推移发出多个值</li>
+<li>可以取消的</li>
+<li>支持 map、filter、reduce 等操作符</li>
+<li>延迟执行，当订阅的时候才会开始执行</li>
+</ul>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/04/05/260511332/453964c7c356cd70a02c3c860bce5051_4555920067121677757.jpg" srcset="/z/img/loading.gif" lazyload alt="PullPush"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="http://blog.csdn.net/lovelion/article/details/7862349">Observer Pattern 课件 - 刘伟 (CSU)</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000008809168">Observable 详解</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Notes/" class="category-chain-item">Notes</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/JavaScript/">#JavaScript</a>
+      
+        <a href="/z/tags/Design-Pattern/">#Design Pattern</a>
+      
+        <a href="/z/tags/Observer-Pattern/">#Observer Pattern</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Observer Pattern （观察者模式）</div>
+      <div>https://cocomi.cf/z/posts/beda1d8f/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2017年11月3日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/622167e/" title="Markdown 样式测试">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Markdown 样式测试</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/4a17b156/" title="Hello World">
+                        <span class="hidden-mobile">Hello World</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

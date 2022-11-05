@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="中文标签、缩略图放大、双击翻页与瀑布流浏览模式，更舒服的 Booru 站点浏览体验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用用户脚本优化 Yandere&#x2F;Konachan 站点浏览体验">
+<meta property="og:url" content="https://cocomi.cf/z/posts/854aec20/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="中文标签、缩略图放大、双击翻页与瀑布流浏览模式，更舒服的 Booru 站点浏览体验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1091021/202207/1091021-20220725230919755-1736331692.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/623ccf465ad72b55bf1258e52da78a85538.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/a5c5df323ed6a9f9f4a8975aa178f09e.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/07/25/260511332/618d4ddd3684de719729f9a1f4d7ee73_8311796271489441122.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/e5bf86ebbc68be5748b697197db1de93.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/07/25/260511332/aa8aa8eb0105b7022d56ec0c7698301d_4922268873480853883.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/b4e794b26a64e0d89080627268fe7076.png">
+<meta property="article:published_time" content="2022-07-25T12:09:28.000Z">
+<meta property="article:modified_time" content="2022-07-25T12:09:28.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="booru">
+<meta property="article:tag" content="yandere">
+<meta property="article:tag" content="konachan">
+<meta property="article:tag" content="userscript">
+<meta property="article:tag" content="tampermonkey">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img2022.cnblogs.com/blog/1091021/202207/1091021-20220725230919755-1736331692.png">
+  
+  
+  
+  <title>利用用户脚本优化 Yandere/Konachan 站点浏览体验 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="利用用户脚本优化 Yandere/Konachan 站点浏览体验"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-25 20:09" pubdate>
+          2022年7月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">利用用户脚本优化 Yandere/Konachan 站点浏览体验</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>中文标签、缩略图放大、双击翻页与瀑布流浏览模式，更舒服的 Booru 站点浏览体验</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><a target="_blank" rel="noopener" href="https://yande.re/post">Y 站</a> 与 <a target="_blank" rel="noopener" href="https://konachan.com/post">K 站</a> 都是寻找壁纸的好网站，日常必备，只可惜浏览体验不是很好，网站界面与标签都是英文，图片列表页面缩略图也比较小。这个时候自然要无敌的油猴脚本出马了，我便立马打开了 <a target="_blank" rel="noopener" href="https://greasyfork.org/">Greasy Fork</a> 进行搜索。排除掉一些比较久远并且失效的脚本，我发现了 yande-re-chinese-patch，说实话这个脚本对页面的一些修改比如 sidebar 显隐、键盘翻页啥的我不是很感冒，但是这个流体布局浏览模式让我眼前一亮，用起来不错，而且翻译了一些常用的标签，终于不用整天划词了 w。于是便在这个脚本基础上进行了修改并对代码进行了重构，使用 <a target="_blank" rel="noopener" href="http://vitejs.dev/">vite</a> 与 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/vite-plugin-tm-userscript">vite-plugin-tm-userscript</a> 进行构建，然后支持了一些其他图站，利用 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@himeka/booru">@himeka&#x2F;booru</a> 库来获取各 booru 站点数据。访问 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry">GitHub</a> 查看源码。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="PC-端"><a href="#PC-端" class="headerlink" title="PC 端"></a>PC 端</h3><ul>
+<li>如何安装用户脚本管理器插件不再赘述，可以参照 <a target="_blank" rel="noopener" href="https://greasyfork.org/">Greasy Fork</a> 首页提示安装浏览器插件。</li>
+<li>脚本已发布在 <a target="_blank" rel="noopener" href="https://greasyfork.org/zh-CN/scripts/444885">Greasy Fork</a> 上，可以点进页面直接安装。</li>
+<li>如果没登 Greasy Fork 账号的话，可以访问 <a target="_blank" rel="noopener" href="https://sleazyfork.org/scripts/444885">Sleazy Fork</a> 进行安装。</li>
+<li>建议安装 <a target="_blank" rel="noopener" href="https://greasyfork.org/zh-CN/scripts/23840">大人的 Greasyfork</a> 脚本在访问匿名不可用脚本时跳转至 Sleazyfork。</li>
+<li>也可以直接从 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry/raw/main/dist/yandere-masonry.user.js">GitHub 仓库文件</a> 安装。</li>
+</ul>
+<h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><ul>
+<li>使用 Yandex、Kiwi 或 Firefox 等浏览器安装 Tampermonkey 插件，然后再安装本脚本。</li>
+<li>或者直接使用第三方原生应用 <a target="_blank" rel="noopener" href="https://github.com/flexbooru/flexbooru">Flexbooru</a> &#x2F; <a target="_blank" rel="noopener" href="https://github.com/sin3hz/Mbooru/releases">Mbooru</a>。</li>
+</ul>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><h3 id="缩略图放大"><a href="#缩略图放大" class="headerlink" title="缩略图放大"></a>缩略图放大</h3><p>对列表页的缩略图进行放大 [Y 站 &#x2F; K 站]</p>
+<p><img src="https://img2022.cnblogs.com/blog/1091021/202207/1091021-20220725230919755-1736331692.png" srcset="/z/img/loading.gif" lazyload alt="图 3"></p>
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/623ccf465ad72b55bf1258e52da78a85538.png" srcset="/z/img/loading.gif" lazyload alt="图 4"></p>
+<h3 id="双击翻页"><a href="#双击翻页" class="headerlink" title="双击翻页"></a>双击翻页</h3><p>双击页面左侧任意区域进入上一页，双击页面右侧任意区域进入下一页 [Y 站 &#x2F; K 站]</p>
+<h3 id="访问标记"><a href="#访问标记" class="headerlink" title="访问标记"></a>访问标记</h3><p>会在点击过详情页面的图片下方标注一条横线，利用的是 a 标签 :visited 特性，清除缓存后失效 [Y 站 &#x2F; K 站]</p>
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/a5c5df323ed6a9f9f4a8975aa178f09e.png" srcset="/z/img/loading.gif" lazyload alt="图 2"></p>
+<h3 id="标签中文翻译"><a href="#标签中文翻译" class="headerlink" title="标签中文翻译"></a>标签中文翻译</h3><p>添加 Y 站 与 K 站 标签的中文翻译，翻译文件来自 yande-re-chinese-patch ，翻译了出现频率较高的 100 多个标签。</p>
+<p>欢迎 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry/edit/main/src/data/tags_cn.json">PR</a> 补充或校正翻译。</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/07/25/260511332/618d4ddd3684de719729f9a1f4d7ee73_8311796271489441122.png" srcset="/z/img/loading.gif" lazyload alt="图 1"></p>
+<h3 id="瀑布流模式"><a href="#瀑布流模式" class="headerlink" title="瀑布流模式"></a>瀑布流模式</h3><p>点击右上角按钮进入瀑布流模式</p>
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/e5bf86ebbc68be5748b697197db1de93.png" srcset="/z/img/loading.gif" lazyload alt="图 5"></p>
+<h4 id="输出下载地址"><a href="#输出下载地址" class="headerlink" title="输出下载地址"></a>输出下载地址</h4><p>瀑布流模式下可使用 <code>输出下载地址</code> 功能保存图片地址 TXT 后使用迅雷、IDM、wget 等批量下载，见 <a target="_blank" rel="noopener" href="https://github.com/FoXZilla/Pxer/issues/8">FoXZilla&#x2F;Pxer#8</a></p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/07/25/260511332/aa8aa8eb0105b7022d56ec0c7698301d_4922268873480853883.png" srcset="/z/img/loading.gif" lazyload alt="图 6"></p>
+<h4 id="顶部操作"><a href="#顶部操作" class="headerlink" title="顶部操作"></a>顶部操作</h4><ul>
+<li>站点切换，打开侧栏操作，支持站点见下方所述</li>
+<li>打开个人页面或收藏夹（Y 站&#x2F;K 站），侧栏里操作</li>
+<li>瀑布流显示列数切换，列数选择非自动且列数小于 6 时图片会以 sample_url （即点击详情的大小） 展示。</li>
+<li>批量选择</li>
+<li>查看下载列表</li>
+<li>深色模式切换</li>
+</ul>
+<h4 id="详情查看"><a href="#详情查看" class="headerlink" title="详情查看"></a>详情查看</h4><p>点击缩略图可查看详情，可进行以下操作</p>
+<ul>
+<li>收藏（Y 站&#x2F;K 站）</li>
+<li>打开源站详情页面</li>
+<li>打开来源地址</li>
+<li>查看原图</li>
+<li>下载&#x2F;加入下载列表</li>
+<li>打开源站标签页面</li>
+<li>点击图片控制按钮与标签显示</li>
+</ul>
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/b4e794b26a64e0d89080627268fe7076.png" srcset="/z/img/loading.gif" lazyload alt="图 8"></p>
+<h2 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h2><p>Moebooru 站点（Y 站、K 站）可通过设置查询参数 <code>locale</code> 或者设置 cookie 里的 <code>locale</code> 项来指定界面语言</p>
+<p>如： <a target="_blank" rel="noopener" href="https://konachan.net/post?locale=zh_CN">https://konachan.net/post?locale=zh_CN</a></p>
+<p>本脚本在访问 Y 站或 K 站时已默认指定语言为 <code>zh_CN</code></p>
+<h2 id="站点支持"><a href="#站点支持" class="headerlink" title="站点支持"></a>站点支持</h2><p>主要支持站点为 Y 站 和 K 站，其他站点为基本支持。</p>
+<p>本脚本主要是为了方便图片浏览，其他功能如下载为简单支持，不保证完全可用。</p>
+<p>另，存在源站页面图片列表与 API 返回列表不一致的情况，请悉知。</p>
+<p>缩略图放大与双击翻页支持的站点为 Y 站 和 K 站，瀑布流模式支持的 Booru 站点见 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/booru/blob/master/src/sites.json">sites.json</a> （其中有 CSP 限制的站点暂未支持）。</p>
+<h2 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h2><p>瀑布流模式的简单预览效果可以前往 <a target="_blank" rel="noopener" href="https://www.nanoka.top/illust/konachan.html">https://www.nanoka.top/illust/konachan.html</a> 查看</p>
+<h2 id="本地开发"><a href="#本地开发" class="headerlink" title="本地开发"></a>本地开发</h2><ol>
+<li><code>git clone https://github.com/asadahimeka/yandere-masonry.git</code></li>
+<li><code>cd yandere-masonry</code></li>
+<li><code>yarn install</code></li>
+<li><code>yarn dev</code></li>
+</ol>
+<h3 id="Vue-3-TypeScript-Vite"><a href="#Vue-3-TypeScript-Vite" class="headerlink" title="Vue 3 + TypeScript + Vite"></a>Vue 3 + TypeScript + Vite</h3><p>本项目使用 TypeScript + Vue 3 <code>&lt;script setup&gt;</code> 语法编写，并使用 Vite 构建，具体查阅文档：<a target="_blank" rel="noopener" href="https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup">script setup docs</a>。</p>
+<p>P.S. Vue 2.7 以上版本已支持<code>&lt;script setup&gt;</code> 与 Composition-api，本项目使用的 Vue 版本为 2.6.14，如何在 2.7 以下版本使用<code>&lt;script setup&gt;</code>语法 与 Composition-api 可参照 <a target="_blank" rel="noopener" href="https://www.nanoka.top/posts/fb7525a/">Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目</a>。</p>
+<h3 id="推荐-IDE-与插件"><a href="#推荐-IDE-与插件" class="headerlink" title="推荐 IDE 与插件"></a>推荐 IDE 与插件</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/">VS Code</a> + <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar">Volar</a></li>
+</ul>
+<h3 id="TypeScript-中-vue-文件的类型支持"><a href="#TypeScript-中-vue-文件的类型支持" class="headerlink" title="TypeScript 中 .vue 文件的类型支持"></a>TypeScript 中 <code>.vue</code> 文件的类型支持</h3><p>由于 TypeScript 无法处理 <code>.vue</code> 导入的类型信息，因此默认情况下被填充为通用 Vue 组件类型。如果希望在 <code>.vue</code> 导入中获取实际的参数类型（如，在使用 <code>h(...)</code> 时获取参数验证），可以按照以下步骤启用 Volar 的 Take Over 模式：</p>
+<ol>
+<li>从 VS Code 的命令面板运行 <code>Extensions: Show Built-in Extensions</code>，查找 <code>TypeScript and JavaScript Language Features</code>，然后右键单击并选择 <code>Disable (Workspace)</code>。 默认情况下，如果默认 TypeScript 扩展被禁用，Take Over 模式将自行启用。</li>
+<li>通过从命令面板运行<code>Developer: Reload Window</code> 重新加载 VS Code 窗口。</li>
+</ol>
+<p>可以在 <a target="_blank" rel="noopener" href="https://github.com/johnsoncodehk/volar/discussions/471">此处</a> 了解有关 Take Over 模式的更多信息。</p>
+<h2 id="Related"><a href="#Related" class="headerlink" title="Related"></a>Related</h2><p>yande-re-chinese-patch</p>
+<p><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@himeka/booru">@himeka&#x2F;booru</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/asadahimeka/vite-plugin-tm-userscript">vite-plugin-tm-userscript</a></p>
+<p>有问题或建议请到 GitHub <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry/issues">反馈</a></p>
+<hr>
+<p><em>fin.</em></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Original/" class="category-chain-item">Original</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/booru/">#booru</a>
+      
+        <a href="/z/tags/yandere/">#yandere</a>
+      
+        <a href="/z/tags/konachan/">#konachan</a>
+      
+        <a href="/z/tags/userscript/">#userscript</a>
+      
+        <a href="/z/tags/tampermonkey/">#tampermonkey</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>利用用户脚本优化 Yandere/Konachan 站点浏览体验</div>
+      <div>https://cocomi.cf/z/posts/854aec20/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月25日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/9393cc03/" title="使用 Umami 统计个人网站访问数据">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">使用 Umami 统计个人网站访问数据</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/9253784/" title="为博客添加 Pixiv 每日排行榜小挂件">
+                        <span class="hidden-mobile">为博客添加 Pixiv 每日排行榜小挂件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

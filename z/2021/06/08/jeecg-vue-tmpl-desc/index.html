@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#986DB2"><meta name="author" content="Sakura Yumine"><meta name="copyright" content="Sakura Yumine"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>Jeecg-vue-tmpl 相关说明 | Himekana's</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.24/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_j5gk85dg4pf.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link id="light-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism.css" media="(prefers-color-scheme: light)"><link id="dark-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism-tomorrow.css" media="(prefers-color-scheme: dark)"><link rel="icon" href="/z/images/favicon.ico"><link rel="mask-icon" href="/z/images/favicon.ico" color="#986DB2"><link rel="alternate icon" href="/z/yun.ico"><link rel="preload" href="/z/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/z/js/utils.js" as="script"><link rel="preload" href="/z/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/z/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"asadahimeka.github.io","root":"/z/","title":"ヒメカナ","version":"1.6.1","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"検索...","empty":"${query} が見つかりませんでした.","hits":"${hits} 件見つかりました","hits_time":"${hits} 件見つかりました, ${time} ミリ秒"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn?c=i","hitokoto":true},"local_search":{"path":"/z/search.xml"}};
+  </script><link rel="stylesheet" href="/z/css/hexo-theme-yun.css"><script src="/z/js/utils.js"></script><script src="/z/js/hexo-theme-yun.js"></script><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml"><link rel="stylesheet" href="/z/css/custom.css"><script src="//at.alicdn.com/t/font_2598701_iaz8nhub3w.js" async></script><meta name="description" content="Jeecg-vue-tmpl 修改自原版 JeecgBoot 前端项目，根据自身需求进行若干修改，如果有其它需求，比如使用 online 开发功能，建议直接拉取官方代码自行修改，此自用项目模板维护至 2.4.2 版本不再更新。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jeecg-vue-tmpl 相关说明">
+<meta property="og:url" content="https://asadahimeka.github.io/z/2021/06/08/jeecg-vue-tmpl-desc/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="Jeecg-vue-tmpl 修改自原版 JeecgBoot 前端项目，根据自身需求进行若干修改，如果有其它需求，比如使用 online 开发功能，建议直接拉取官方代码自行修改，此自用项目模板维护至 2.4.2 版本不再更新。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://gitee.com/asadahimeka/withpic/raw/as/images/tinymce-ss.png">
+<meta property="article:published_time" content="2021-06-08T07:31:45.000Z">
+<meta property="article:modified_time" content="2021-06-08T07:31:45.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Jeecg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/asadahimeka/withpic/raw/as/images/tinymce-ss.png"><script src="/z/js/ui/mode.js"></script><meta name="referrer" content="no-referrer"></head><body><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/z/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="見出し"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="概要"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/z/about/" title="Sakura Yumine"><img width="96" loading="lazy" src="/z/images/avatar.jpg" alt="Sakura Yumine"><span class="site-author-status" title="迷い込んだ">🌠</span></a><div class="site-author-name"><a href="/z/about/">Sakura Yumine</a></div><a class="site-name" href="/z/about/site.html">Himekana's</a><sub class="site-subtitle">Nanashi.</sub><div class="site-desciption">Nothing to say.</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/z/" title="ホーム"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/z/archives/" title="アーカイブ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">16</span></a></div><div class="site-state-item"><a href="/z/categories/" title="カテゴリ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><div class="site-state-item"><a href="/z/tags/" title="タグ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">19</span></a></div><a class="site-state-item hty-icon-button" href="/z/albums/" title="Albums"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/z/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://794545154.qzone.qq.com/" title="Qzone" target="_blank" style="color:#fbce00"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qzone"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/asadahimeka" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://weibo.com/smallstar9637" title="微博" target="_blank" style="color:#E6162D"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=73306134" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/8051085" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://bgm.tv/user/234864" title="bangumi" target="_blank" style="color:#F09199"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-pgc_bangumi"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.coolapk.com/u/496417" title="酷安" target="_blank" style="color:#0f9d58"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-coolapk1"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.instagram.com/asadahimeka/" title="Instagram" target="_blank" style="color:#FF1F75"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-Instagramlogo"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://twitter.com/soigneehimeka" title="Twitter" target="_blank" style="color:#1da1f2"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-twitter-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://t.me/himekana" title="Telegram" target="_blank" style="color:#0088CC"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-telegram-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:smallstar9637@yahoo.co.jp" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/z/bangumi/" title="My Bangumi List" style="color:#5db2e6"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-unordered"></use></svg></a><a class="links-item hty-icon-button" href="/z/girls/" title="Favorite Girls" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC"><span class="toc-number">1.</span> <span class="toc-text">关于版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-number">2.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">修改内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E6%96%87%E6%A1%A3"><span class="toc-number">4.</span> <span class="toc-text">组件文档</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://asadahimeka.github.io/z/z/2021/06/08/jeecg-vue-tmpl-desc/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Sakura Yumine"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Himekana's"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Jeecg-vue-tmpl 相关说明</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="作成日：2021-06-08 15:31:45" itemprop="dateCreated datePublished" datetime="2021-06-08T15:31:45+08:00">2021-06-08</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="単語数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="単語数">1.2k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="読書の時間"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="読書の時間">4m</span></span></span><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/z/categories/Jeecg/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">Jeecg</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/z/tags/JavaScript/" style="--text-color:#FC9F4D"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a><a class="tag-item" href="/z/tags/Vue/" style="--text-color:#4fc08d"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Vue</span></a><a class="tag-item" href="/z/tags/Jeecg/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Jeecg</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#986DB2;"><p>Jeecg-vue-tmpl 修改自原版 JeecgBoot 前端项目，根据自身需求进行若干修改，如果有其它需求，比如使用 online 开发功能，建议直接拉取官方代码自行修改，此自用项目模板维护至 2.4.2 版本不再更新。</p>
+<span id="more"></span>
+
+<h2 id="关于版本"><a href="#关于版本" class="headerlink" title="关于版本"></a>关于版本</h2><p>暂未发现前端版本与 jeecg 后端版本不同时有何问题，如有问题，请使用官方项目。</p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li><p>JeecgBoot 官方文档见 <a target="_blank" rel="noopener" href="http://doc.jeecg.com/2043868">http://doc.jeecg.com</a></p>
+</li>
+<li><p>JeecgBoot 官方更新日志见 <a target="_blank" rel="noopener" href="http://www.jeecg.com/doc/log">http://www.jeecg.com/doc/log</a></p>
+</li>
+<li><p>自用模板项目 Readme 见 <a href="/z/2021/06/08/jeecg-vue-tmpl-readme/">Jeecg-vue-tmpl Readme</a></p>
+</li>
+<li><p>更多参考文档见 <a href="/z/2021/06/08/jeecg-vue-tmpl-readme/">Jeecg-vue-tmpl Readme</a> 参考链接部分</p>
+</li>
+</ul>
+<h2 id="修改内容"><a href="#修改内容" class="headerlink" title="修改内容"></a>修改内容</h2><ol>
+<li><p>添加部分 npm 脚本</p>
+<ul>
+<li><p>如 <code>yarn deploy</code> ：通过 <code>rsync</code> 命令自动部署到服务器，</p>
+</li>
+<li><p>如 <code>yarn scp</code> ：无 Linux 环境时，通过 <code>scp</code> 命令自动部署到服务器，</p>
+</li>
+<li><p>如 <code>yarn build:repo</code> ：生成打包分析文件帮助分析文件大小，</p>
+</li>
+<li><p>具体用法见项目 Readme： <a href="jeecg-vue-tmpl-readme">Jeecg-vue-tmpl Readme</a>。</p>
+</li>
+</ul>
+</li>
+<li><p>添加 git hooks</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token property">"gitHooks"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+  <span class="token property">"pre-commit"</span><span class="token operator">:</span> <span class="token string">"lint-staged"</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token property">"lint-staged"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+  <span class="token property">"*.&#123;js,vue&#125;"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"vue-cli-service lint"</span><span class="token punctuation">,</span>
+    <span class="token string">"git add"</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">&#125;</span></code></pre></li>
+<li><p>移除 online 开发部分，原因是占用体积较大且暂时未用到，如需使用，拉取官方前端代码自行使用</p>
+</li>
+<li><p>移除自带地区选择组件</p>
+</li>
+<li><p>添加部分依赖</p>
+<ul>
+<li><p><code>moment-range</code> : Fancy date ranges for Moment.js，日期范围计算</p>
+</li>
+<li><p><code>numeral</code>： Format and manipulate numbers，数字格式化、精确计算</p>
+</li>
+<li><p><code>v-distpicker</code> : 省市区下拉选择框</p>
+</li>
+<li><p><code>@vue/eslint-config-standard</code>： eslint 之 standard 规则</p>
+</li>
+<li><p><code>compression-webpack-plugin</code> ：打包时进行 gzip 压缩</p>
+</li>
+<li><p><code>lint-staged</code> ：往 git 提交代码时进行 eslint 校验</p>
+</li>
+<li><p><code>serve</code>： 本地静态服务器</p>
+</li>
+<li><p><code>vue-svg-loader</code>： Use SVG files as Vue Components，自定义图标配合 <code>&lt;a-icon /&gt;</code> 使用</p>
+</li>
+</ul>
+</li>
+<li><p>添加 <code>jsconfig.json</code> 文件，使 vscode 提供智能补全等功能</p>
+</li>
+<li><p>添加 vscode 工作区设置文件，扩展推荐文件，建议使用 vscode 并安装相关插件进行开发</p>
+</li>
+<li><p>对整体代码按 eslint 规则格式进行 fix</p>
+</li>
+<li><p>添加环境变量文件，区分开发与生产环境使用</p>
+<pre class="language-env" data-language="env"><code class="language-env">NODE_ENV &#x3D; &#39;development&#39;
+# API 接口地址
+VUE_APP_BASE_API &#x3D; &#39;&#39;
+# 系统名称
+VUE_APP_LOGO_TITLE &#x3D; &#39;Admin&#39;
+# [暂不可用] 是否需要错误上报（钉钉机器人提醒）
+VUE_APP_NEED_REPO &#x3D; &#39;no&#39;</code></pre></li>
+<li><p>配置 eslint 规则，主要使用 eslint 官方推荐规则、vue 官方推荐规则与 standard 规则，并忽略部分难以修改的 jeecg 代码</p>
+</li>
+<li><p>修改 <code>vue.config.js</code> 配置文件</p>
+<ul>
+<li><p>官方参考文档 <a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/">https://cli.vuejs.org/zh/config/</a></p>
+</li>
+<li><p>moment 语言包只加载中文</p>
+<pre class="language-js" data-language="js"><code class="language-js"><span class="token function-variable function">configureWebpack</span><span class="token operator">:</span> <span class="token parameter">config</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+ <span class="token comment">// moment 语言包只加载 zh-cn; load `moment/locale/zh-cn.js`</span>
+ config<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">webpack<span class="token punctuation">.</span>ContextReplacementPlugin</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">moment[/\\]locale$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">zh-cn</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span></code></pre></li>
+<li><p>配置 svg loader</p>
+</li>
+<li><p>打包文件优化，合并小文件</p>
+</li>
+<li><p>配置 gzip 压缩，提高加载速度</p>
+</li>
+<li><p>修改 ant-design-vue 主题色</p>
+</li>
+<li><p>配置开发环境代理</p>
+</li>
+</ul>
+</li>
+<li><p>添加 tinymce powepaste 插件，修改皮肤文件结构</p>
+</li>
+<li><p>将一些在线图标改为本地图标，置于 <code>public/default</code> 文件夹下</p>
+</li>
+<li><p>将 <code>polyfill.js</code> 替换为压缩后的 <code>polyfill.min.js</code></p>
+</li>
+<li><p>打包完后可在 <code>index.html</code> 中直接修改接口前缀地址，方便部署时修改</p>
+</li>
+<li><p>添加自动生成组件文件的 nodejs 脚本</p>
+</li>
+<li><p>添加路由切换时的 transition 效果</p>
+</li>
+<li><p>将 <code>~@/assets/less/common.less</code> 通用样式文件置于 <code>App.vue</code> 中加载，不再在组件中重复加载</p>
+</li>
+<li><p>修改项目默认配置项 <code>@/defaultSettings.js</code></p>
+</li>
+<li><p>在 <code>@/main.js</code> 中移除不用的 import</p>
+</li>
+<li><p>在 <code>@/permission.js</code> 中添加不勾选自动登录时的处理办法</p>
+</li>
+<li><p>在 <code>@/api/manage.js</code> 中添加相关 JSDoc 声明，方便类型联想；并添加导出后端生成文件方法：<code>getBlob</code></p>
+</li>
+<li><p>修改一些样式置于<code>@/assets/less/cover.less</code></p>
+</li>
+<li><p>按自身需求修改 <code>@/components/chart</code> 下的图表组件</p>
+</li>
+<li><p>修改 tinymce 富文本编辑器组件 <code>JEditor</code> 为如下效果<br><img src="https://gitee.com/asadahimeka/withpic/raw/as/images/tinymce-ss.png" alt="tinymce" loading="lazy"></p>
+</li>
+<li><p>添加时间选择组件 <code>JTime</code></p>
+</li>
+<li><p>添加上传按钮组件 <code>JUploadBtn</code> 、拖拽上传图片组件 <code>JUploadImageD</code></p>
+</li>
+<li><p>添加自动拼接 jeecg 文件前缀 url 的组件 <code>MyImg</code></p>
+</li>
+<li><p>添加搜索筛选组件 <code>SearchFilter</code> 与模板中的 switch case 组件 <code>&lt;v-switch /&gt;</code></p>
+</li>
+<li><p>修改 Logo 组件、搜索菜单组件，添加时间显示组件、待办事项组件</p>
+</li>
+<li><p>添加百分比输入组件 <code>PercentNum</code></p>
+</li>
+<li><p><code>@/icons </code>为自定义图标存放处</p>
+</li>
+<li><p>修改通用列表混入文件 <code>@/mixins/JeecgListMixin.js</code></p>
+</li>
+<li><p>hack router push callback</p>
+</li>
+<li><p>添加工具方法 点击复制 <code>@/src/utils/clipboard.js</code></p>
+</li>
+<li><p>于 <code>@/src/utils/dicts.js</code> 添加数据字典翻译函数 <code>transDict</code> 并且将其添加到过滤器</p>
+</li>
+<li><p>于 <code>@/src/utils/hasPermission.js </code>中添加当 <code>v-has</code> 指令不便使用时的替代函数： <code>checkPermission</code></p>
+</li>
+<li><p>添加自用工具方法 <code>@/src/utils/index.js</code></p>
+</li>
+<li><p>封装 axios : <code>@/src/utils/request.js</code></p>
+</li>
+<li><p>封装 localStorage、sessionStorage：<code>@/src/utils/storage.js</code></p>
+</li>
+<li><p><code>@/src/utils/validate.js</code> 中添加身份证号校验</p>
+</li>
+<li><p>layouts 移至 views 文件夹中</p>
+</li>
+</ol>
+<h2 id="组件文档"><a href="#组件文档" class="headerlink" title="组件文档"></a>组件文档</h2><p>Jeecg 组件文档见官网文档或 <code>docs</code>文件夹下或各组件位置处的 md 文件</p>
+<p>自用文档见 <a href="/z/2021/06/08/jeecg-vue-tmpl-comp-doc/">Jeecg-vue-tmpl 自用文档</a></p>
+<hr>
+<p><em>fin.</em></p>
+</div></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/z/2021/06/08/jeecg-vue-tmpl-comp-doc/" rel="prev" title="Jeecg-vue-tmpl 自用文档"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">Jeecg-vue-tmpl 自用文档</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/z/2021/06/08/jeecg-vue-tmpl-readme/" rel="next" title="Jeecg-vue-tmpl Readme"><span class="post-nav-text">Jeecg-vue-tmpl Readme</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2017 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-heart-line"></use></svg></span><span class="author"> Sakura Yumine</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.6.1</span></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#986DB2" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="検索"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/z/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="検索..." value=""></div><div id="local-search-result"></div></div><script>const date = new Date();
+const today = (date.getMonth() + 1) + "-" + date.getDate()
+const mourn_days = ["4-4","5-12","9-18","12-13"]
+if (mourn_days.includes(today)) {
+  document.documentElement.style.filter = "grayscale(1)";
+}</script></div></body></html>

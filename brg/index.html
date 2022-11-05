@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>BuRoGu</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="cnt">
+        <p>Burogu&nbsp;LIST</p>
+        <div class="list"></div>
+    </div>
+    <script>
+$.get("mds.list").then(function (res) {
+  res.split('\n').forEach(e => {
+    var n = e.split('.')[0]
+    $('.list').append(`<a class="listitem" href="dtl/?${n}">${n}</a>`);
+  });
+}).catch(function (err) {
+  $('.list').append(`<a href="" style="font-size:40px">404 NOT FOUND</a>`);
+});
+   </script>
+</body>
+
+</html>

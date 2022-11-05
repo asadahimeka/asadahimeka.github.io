@@ -1,0 +1,279 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    /*background: url(images/bg.jpg);
+    background-size: cover;*/
+    background: #efeeea;
+    background: linear-gradient(#f9f9f9, #cecbc4);
+    color: #757575;
+}
+
+p {
+    margin: 59px 0 -6px;
+    font-family: Moon, "Times New Roman";
+    text-align: center;
+    font-size: 33px;
+}
+
+ul {
+    list-style: none;
+}
+
+.container {
+    border: 13px solid rgba(3, 169, 244, 0.3);
+    border-radius: 6px;
+    margin: 60px auto;
+    position: relative;
+    width: 680px;
+    height: 331px;
+    overflow: hidden;/*隐藏溢出的图片*/
+    transition: .3s;
+}
+
+.pic {
+    height: 320px;
+    width: calc(680px * 6);
+    /*n张图的宽度*/
+    position: absolute;
+    /*基于父容器进行定位*/
+    left: 0;
+    animation: caro 15s linear infinite;
+
+    /*animation-name: caro;
+    animation-duration: 15s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;*/
+    /*动画调用可以简写*/
+}
+
+.container:hover {
+    transform: scale(1.2);
+    box-shadow: 12px 12px 12px pink;
+}
+
+.container:hover .pic,
+.container:hover .load-bar-inner,
+.container:hover .lbi,
+.container:hover #intr,
+.container:hover .focus-item {
+    animation-play-state: paused;
+}
+
+@keyframes caro {
+    0%,15% {
+        left: 0;
+    }
+    20%,35% {
+        left: -680px;
+    }
+    40%,55% {
+        left: -1360px;
+    }
+    60%,75% {
+        left: -2040px;
+    }
+    80%,95% {
+        left: -2720px;
+    }
+    100% {
+        left: -3400px;
+    }
+}
+
+.pic li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 680px;
+    height: 320px;
+    float: left;
+    background: #fff;
+}
+
+.pic li img {
+    width: 270px;
+    height: 152px;
+    z-index: 0;
+}
+
+#intr {
+    opacity: 0.6;
+    width: calc(680px * 6);
+    height: 40px;
+    position: absolute;
+    margin-top: 293px;
+    left: 0;
+    animation: caro 15s linear infinite;
+}
+
+#intr li {
+    width: 680px;
+    height: 40px;
+    text-align: center;
+    color: #fff;
+    float: left;
+    background: #000;
+    border-radius: 1px;
+    z-index: 1;
+}
+
+.container .load-bar {
+    width: 100%;
+    height: 5px;
+    margin-top: 320px;
+    border-radius: 0px;
+    background: #dcdbd7;
+    position: relative;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.container .load-bar-inner {
+    height: 99%;
+    width: 0%;
+    border-radius: inherit;
+    position: relative;
+    background: linear-gradient(#f6c8dc, #ff6b85);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 5px rgba(0, 0, 0, 0.3),
+    0 4px 5px rgba(0, 0, 0, 0.3);
+    animation: loader 3s linear infinite;
+}
+
+.container .lb {
+    width: 100%;
+    height: 5px;
+    margin-top: 0px;
+    border-radius: 0px;
+    background: #dcdbd7;
+    position: relative;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.container .lbi {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    position: relative;
+    background: #c2d7ac;
+    background: linear-gradient(#cfc8f6, #7a48ba);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 5px rgba(0, 0, 0, 0.3),
+    0 4px 5px rgba(0, 0, 0, 0.3);
+    animation: loader 15s linear infinite;
+}
+
+@keyframes loader {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.floatfix {
+    *zoom: 1;
+}
+
+.floatfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.focus-container {
+    position: absolute;
+    z-index: 3;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+}
+
+.focus-container li {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 10px;
+    background: #fff;
+}
+
+.focus-item {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    animation-timing-function: linear;
+    animation-name: fade;
+    animation-iteration-count: infinite;
+}
+
+.focus-item2,
+.focus-item3,
+.focus-item4,
+.focus-item5 {
+    opacity: 0;
+}
+
+.focus-container ul {
+    margin: 0 10px;
+}
+
+/*设置轮播焦点的位置*/
+.focus-container {
+    bottom: 5%;
+}
+
+/*设置当前图片焦点的颜色*/
+.focus-item {
+    background: purple;
+}
+
+.focus-item {
+    animation-duration: 15s;
+}
+
+.focus-item1 {
+    animation-delay: 0s;
+}
+
+.focus-item2 {
+    animation-delay: 3s;
+}
+
+.focus-item3 {
+    animation-delay: 6s;
+}
+
+.focus-item4 {
+    animation-delay: 9s;
+}
+
+.focus-item5 {
+    animation-delay: 12s;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+        z-index: 2;
+    }
+    5% ,20%{
+        opacity: 1;
+        z-index: 1;
+    }
+    25% ,100%{
+        opacity: 0;
+        z-index: 0;
+    }
+}

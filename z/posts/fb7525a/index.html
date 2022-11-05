@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文记录如何在 Vue2 环境下尽量使用 Vue3 的 Composition-api 并配合 Vuetify2 使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目">
+<meta property="og:url" content="https://cocomi.cf/z/posts/fb7525a/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="本文记录如何在 Vue2 环境下尽量使用 Vue3 的 Composition-api 并配合 Vuetify2 使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/e5482b5a51ea9f2f0968d207ba92d137.png">
+<meta property="article:published_time" content="2022-05-04T11:57:35.000Z">
+<meta property="article:modified_time" content="2022-05-04T11:57:35.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Vite">
+<meta property="article:tag" content="Vuetify">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic.rmb.bdstatic.com/bjh/events/e5482b5a51ea9f2f0968d207ba92d137.png">
+  
+  
+  
+  <title>Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-04 19:57" pubdate>
+          2022年5月4日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          65 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>本文记录如何在 Vue2 环境下尽量使用 Vue3 的 Composition-api 并配合 Vuetify2 使用</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前在改造一个用 Vuetify2 的 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry">项目</a>，由于 Vuetify3 还处于 beta 阶段并且与 Vuetify2 相比缺失一些特性，但又想用 Vue3 的 <code>&lt;script setup&gt;</code> 语法，于是寻找了下相关方案，下面简单记录一下。</p>
+<h2 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h2><p>建议使用 VSCode 开发并安装以下插件且禁用 Vetur：</p>
+<p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Vue.volar">Vue Language Features (Volar)</a></p>
+<p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin">TypeScript Vue Plugin (Volar)</a></p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>使用 <code>npm init</code> 初始化项目</p>
+<h2 id="添加所需依赖"><a href="#添加所需依赖" class="headerlink" title="添加所需依赖"></a>添加所需依赖</h2><ul>
+<li><a href="mailto:&#118;&#x75;&#x65;&#64;&#50;&#x2e;&#54;&#46;&#49;&#x34;">&#118;&#x75;&#x65;&#64;&#50;&#x2e;&#54;&#46;&#49;&#x34;</a>: 指定 2 版本，不指定的话默认安装 3 版本</li>
+<li>vue-template-compiler: 将 Vue 2.0 模板预编译为渲染函数</li>
+<li>vite-plugin-vue2: 让 Vite 支持 Vue2</li>
+<li>@vue&#x2F;composition-api: 在 Vue2 项目中使用组合 API</li>
+<li>unplugin-vue2-script-setup: 在 Vue2 项目中使用 <code>&lt;script setup&gt;</code> 语法糖</li>
+<li>unplugin-vue-components: 按需自动引入组件</li>
+<li>@vue&#x2F;runtime-dom: 配合 Volar</li>
+</ul>
+<p>完整依赖如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;@mdi/font&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5.9.55&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;@vue/composition-api&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.6.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;roboto-fontface&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;*&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.6.14&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vuetify&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.6.4&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;webfontloader&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.0.0&quot;</span><br><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br><span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;@types/node&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^17.0.29&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;@types/webfontloader&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.6.34&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;@vue/runtime-dom&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^3.2.33&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;sass&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1.32.12&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;typescript&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.6.3&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;unplugin-vue-components&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^0.19.3&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;unplugin-vue2-script-setup&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^0.10.2&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vite&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.9.5&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vite-plugin-vue2&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.0.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vue-template-compiler&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.6.14&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;vue-tsc&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^0.34.10&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="文件目录结构"><a href="#文件目录结构" class="headerlink" title="文件目录结构"></a>文件目录结构</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs stylus">📦project<br> ┣ 📂<span class="hljs-selector-class">.vscode</span><br> ┣ 📂dist<br> ┣ 📂node_modules<br> ┣ 📂<span class="hljs-attribute">src</span><br> ┃ ┣ 📂common<br> ┃ ┣ 📂components<br> ┃ ┣ 📂plugins<br> ┃ ┃ ┣ 📜vuetify<span class="hljs-selector-class">.ts</span><br> ┃ ┃ ┗ 📜webfontloader<span class="hljs-selector-class">.ts</span><br> ┃ ┣ 📂styles<br> ┃ ┣ 📜App<span class="hljs-selector-class">.vue</span><br> ┃ ┣ 📜env<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span><br> ┃ ┗ 📜<span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.ts</span><br> ┣ 📜<span class="hljs-selector-class">.gitattributes</span><br> ┣ 📜<span class="hljs-selector-class">.gitignore</span><br> ┣ 📜components<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span><br> ┣ 📜index<span class="hljs-selector-class">.html</span><br> ┣ 📜package<span class="hljs-selector-class">.json</span><br> ┣ 📜readme<span class="hljs-selector-class">.md</span><br> ┣ 📜tsconfig<span class="hljs-selector-class">.json</span><br> ┣ 📜tsconfig<span class="hljs-selector-class">.node</span><span class="hljs-selector-class">.json</span><br> ┣ 📜vite<span class="hljs-selector-class">.config</span><span class="hljs-selector-class">.ts</span><br> ┗ 📜yarn.lock<br></code></pre></td></tr></table></figure>
+<h3 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h3><p>来自 <a target="_blank" rel="noopener" href="https://cn.vitejs.dev/guide/#index-html-and-project-root">Vite 官网</a>：</p>
+<blockquote>
+<p>你可能已经注意到，在一个 Vite 项目中，<code>index.html</code> 在项目最外层而不是在 <code>public</code> 文件夹内。这是有意而为之的：在开发期间 <code>Vite</code> 是一个服务器，而 <code>index.html</code> 是该 Vite 项目的入口文件。Vite 将 <code>index.html</code> 视为源码和模块图的一部分。Vite 解析 <code>&lt;script type=&quot;module&quot; src=&quot;...&quot;&gt;</code> ，这个标签指向你的 JavaScript 源码。甚至内联引入 JavaScript 的 <code>&lt;script type=&quot;module&quot;&gt;</code> 和引用 CSS 的 <code>&lt;link href&gt;</code> 也能利用 Vite 特有的功能被解析。另外，<code>index.html</code> 中的 URL 将被自动转换，因此不再需要 <code>%PUBLIC_URL%</code> 占位符了。</p>
+</blockquote>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;zh&quot;</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span> /&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;viewport&quot;</span> <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;width=device-width, initial-scale=1&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Vite App<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;module&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;/src/main.ts&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="components-d-ts"><a href="#components-d-ts" class="headerlink" title="components.d.ts"></a>components.d.ts</h3><p>由 <code>unplugin-vue-components</code> 自动生成，为自动引入组件提供支持，在 <code>vite.config.ts</code> 中通过以下设置打开</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Components</span>(&#123;<br>  <span class="hljs-attr">dts</span>: <span class="hljs-literal">true</span>, <span class="hljs-comment">// enabled by default if `typescript` is installed</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>记得把 <code>components.d.ts</code> 添加到 <code>tsconfig.json</code> 的 <code>includes</code></p>
+<h3 id="tsconfig-json"><a href="#tsconfig-json" class="headerlink" title="tsconfig.json"></a>tsconfig.json</h3><blockquote>
+<p><code>tsconfig.json</code> 文件中指定了用来编译这个项目的根文件和编译选项。</p>
+</blockquote>
+<p>配置全局类型：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;compilerOptions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;types&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;vite/client&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">&quot;node&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">&quot;vue&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">&quot;vuetify&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-string">&quot;unplugin-vue2-script-setup/types&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p>Volar 需要以下配置来支持 Vue2</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;vueCompilerOptions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;experimentalCompatMode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;experimentalTemplateCompilerOptions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;compatConfig&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;MODE&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span> <span class="hljs-comment">// optional</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p>完整配置见 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/userscripts/blob/master/yandere-masonry/tsconfig.json">yandere-masonry&#x2F;tsconfig.json</a></p>
+<h3 id="tsconfig-node-json"><a href="#tsconfig-node-json" class="headerlink" title="tsconfig.node.json"></a>tsconfig.node.json</h3><p>配置 <code>vite.config.ts</code> 的 TypeScript 选项</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;compilerOptions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;composite&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;module&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;esnext&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;moduleResolution&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;node&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;esModuleInterop&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;allowSyntheticDefaultImports&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;types&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;node&quot;</span><span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;include&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;vite.config.ts&quot;</span><span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="vite-config-ts"><a href="#vite-config-ts" class="headerlink" title="vite.config.ts"></a>vite.config.ts</h3><p>Vite 配置文件，之前安装的插件需要这个文件里配置一下来支持 Vue2、<code>&lt;script setup&gt;</code> 等等</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">import</span> &#123; fileURLToPath, <span class="hljs-variable constant_">URL</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;node:url&#x27;</span><br><span class="hljs-keyword">import</span> &#123; defineConfig &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vite&#x27;</span><br><span class="hljs-keyword">import</span> &#123; createVuePlugin <span class="hljs-keyword">as</span> <span class="hljs-title class_">Vue2</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vite-plugin-vue2&#x27;</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">VuetifyResolver</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;unplugin-vue-components/resolvers&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">Components</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;unplugin-vue-components/vite&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">ScriptSetup</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;unplugin-vue2-script-setup/vite&#x27;</span><br><br><span class="hljs-comment">// https://vitejs.dev/config/</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title function_">defineConfig</span>(&#123;<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-comment">// https://github.com/underfin/vite-plugin-vue2</span><br>    <span class="hljs-title class_">Vue2</span>(&#123; <span class="hljs-attr">target</span>: <span class="hljs-string">&#x27;esnext&#x27;</span> &#125;),<br>    <span class="hljs-comment">// https://github.com/antfu/unplugin-vue2-script-setup</span><br>    <span class="hljs-title class_">ScriptSetup</span>(),<br>    <span class="hljs-comment">// https://github.com/antfu/unplugin-vue-components</span><br>    <span class="hljs-title class_">Components</span>(&#123;<br>      <span class="hljs-comment">// generate `components.d.ts` global declarations</span><br>      <span class="hljs-attr">dts</span>: <span class="hljs-literal">true</span>,<br>      <span class="hljs-comment">// auto import for directives</span><br>      <span class="hljs-attr">directives</span>: <span class="hljs-literal">true</span>,<br>      <span class="hljs-comment">// resolvers for custom components</span><br>      <span class="hljs-attr">resolvers</span>: [<br>        <span class="hljs-comment">// Vuetify</span><br>        <span class="hljs-title class_">VuetifyResolver</span>(),<br>      ],<br>    &#125;),<br>  ],<br>  <span class="hljs-attr">resolve</span>: &#123;<br>    <span class="hljs-attr">alias</span>: &#123;<br>      <span class="hljs-string">&#x27;@&#x27;</span>: <span class="hljs-title function_">fileURLToPath</span>(<span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(<span class="hljs-string">&#x27;src&#x27;</span>, <span class="hljs-keyword">import</span>.<span class="hljs-property">meta</span>.<span class="hljs-property">url</span>))<br>    &#125;,<br>  &#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="src-x2F-env-d-ts"><a href="#src-x2F-env-d-ts" class="headerlink" title="src&#x2F;env.d.ts"></a>src&#x2F;env.d.ts</h3><p>提供类型支持：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-comment">/// &lt;reference types=&quot;vite/client&quot; /&gt;</span><br><br><span class="hljs-keyword">declare</span> <span class="hljs-variable language_">module</span> <span class="hljs-string">&#x27;*.vue&#x27;</span> &#123;<br>  <span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> &#123; <span class="hljs-title class_">DefineComponent</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span><br>  <span class="hljs-comment">// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types</span><br>  <span class="hljs-keyword">const</span> <span class="hljs-attr">component</span>: <span class="hljs-title class_">DefineComponent</span>&lt;&#123;&#125;, &#123;&#125;, <span class="hljs-built_in">any</span>&gt;<br>  <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> component<br>&#125;<br><br><span class="hljs-keyword">declare</span> <span class="hljs-variable language_">module</span> <span class="hljs-string">&#x27;vuetify/lib/framework&#x27;</span> &#123;<br>  <span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;vuetify/types&#x27;</span><br>  <span class="hljs-keyword">import</span> <span class="hljs-title class_">Vuetify</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuetify&#x27;</span><br>  <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Vuetify</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="src-x2F-main-ts"><a href="#src-x2F-main-ts" class="headerlink" title="src&#x2F;main.ts"></a>src&#x2F;main.ts</h3><p>入口文件，在此安装 <code>VueCompositionAPI</code> 与 <code>Vuetify</code>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vue</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">VueCompositionAPI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@vue/composition-api&#x27;</span><br><span class="hljs-keyword">import</span> installVuetify <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./plugins/vuetify&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">App</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./App.vue&#x27;</span><br><br><span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">use</span>(<span class="hljs-title class_">VueCompositionAPI</span>)<br><br><span class="hljs-keyword">const</span> vuetify = <span class="hljs-title function_">installVuetify</span>()<br><span class="hljs-keyword">const</span> app = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>  vuetify,<br>  <span class="hljs-attr">render</span>: <span class="hljs-function"><span class="hljs-params">h</span> =&gt;</span> <span class="hljs-title function_">h</span>(<span class="hljs-title class_">App</span>),<br>&#125;)<br>app.$mount(<span class="hljs-string">&#x27;#app&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="src-x2F-App-vue"><a href="#src-x2F-App-vue" class="headerlink" title="src&#x2F;App.vue"></a>src&#x2F;App.vue</h3><p>直接使用 <code>&lt;script setup&gt;</code> 语法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">v-app</span> <span class="hljs-attr">:theme</span>=<span class="hljs-string">&quot;store.theme&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">v-app-bar</span> /&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">v-navigation-drawer</span> /&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">v-main</span> <span class="hljs-attr">app</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">v-container</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">v-main</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">v-app</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">setup</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;ts&quot;</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-comment">// This starter template is using Vue 3 &lt;script setup&gt; SFCs</span></span><br><span class="language-javascript"><span class="hljs-comment">// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup</span></span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">import</span> &#123; onMounted &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@vue/composition-api&#x27;</span></span><br><span class="language-javascript"><span class="hljs-keyword">import</span> &#123; useVuetify &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./plugins/vuetify&#x27;</span></span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">const</span> vuetify = <span class="hljs-title function_">useVuetify</span>()</span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-title function_">onMounted</span>(<span class="hljs-function">() =&gt;</span> &#123;</span><br><span class="language-javascript">  vuetify.<span class="hljs-property">theme</span>.<span class="hljs-property">dark</span> = <span class="hljs-literal">true</span></span><br><span class="language-javascript">&#125;)</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="src-x2F-plugins-x2F-vuetify-ts"><a href="#src-x2F-plugins-x2F-vuetify-ts" class="headerlink" title="src&#x2F;plugins&#x2F;vuetify.ts"></a>src&#x2F;plugins&#x2F;vuetify.ts</h3><p>安装 <code>Vuetify</code>，并通过 <code>useVuetify</code> 暴露 <code>$vuetify</code> 实例：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-comment">// Styles</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;@mdi/font/css/materialdesignicons.css&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;vuetify/dist/vuetify.min.css&#x27;</span><br><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vue</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vuetify</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuetify&#x27;</span><br><span class="hljs-keyword">import</span> &#123; getCurrentInstance &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@vue/composition-api&#x27;</span><br><span class="hljs-keyword">import</span> &#123; loadFonts &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./webfontloader&#x27;</span><br><br><span class="hljs-title function_">loadFonts</span>()<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">installVuetify</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">use</span>(<span class="hljs-title class_">Vuetify</span>)<br>  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Vuetify</span>(&#123;&#125;)<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> installVuetify<br><br><span class="hljs-comment">/** Get vuetify instance (For Composition api) */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">useVuetify</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-comment">/** Get Instance */</span><br>  <span class="hljs-keyword">const</span> instance = <span class="hljs-title function_">getCurrentInstance</span>()<br>  <span class="hljs-keyword">if</span> (!instance) &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Should be used in setup().&#x27;</span>)<br>  &#125;<br>  <span class="hljs-keyword">return</span> instance.<span class="hljs-property">proxy</span>.<span class="hljs-property">$vuetify</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="src-x2F-plugins-x2F-webfontloader-ts"><a href="#src-x2F-plugins-x2F-webfontloader-ts" class="headerlink" title="src&#x2F;plugins&#x2F;webfontloader.ts"></a>src&#x2F;plugins&#x2F;webfontloader.ts</h3><p>加载字体：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * plugins/webfontloader.js</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * webfontloader documentation: https://github.com/typekit/webfontloader</span><br><span class="hljs-comment"> */</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">loadFonts</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> webFontLoader = <span class="hljs-keyword">await</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;webfontloader&#x27;</span>)<br><br>  webFontLoader.<span class="hljs-title function_">load</span>(&#123;<br>    <span class="hljs-attr">google</span>: &#123;<br>      <span class="hljs-attr">families</span>: [<span class="hljs-string">&#x27;Roboto:100,300,400,500,700,900&amp;display=swap&#x27;</span>],<br>    &#125;,<br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>启动项目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yarn dev<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/e5482b5a51ea9f2f0968d207ba92d137.png" srcset="/z/img/loading.gif" lazyload alt="图 1"></p>
+<p>项目代码见 <a target="_blank" rel="noopener" href="https://github.com/asadahimeka/yandere-masonry">yandere-masonry</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7012240119465771038">https://juejin.cn/post/7012240119465771038</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/logue/vite-vue2-vuetify-ts-starter">https://github.com/logue/vite-vue2-vuetify-ts-starter</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/antfu/unplugin-vue2-script-setup">https://github.com/antfu/unplugin-vue2-script-setup</a></p>
+<hr>
+<p><em>fin.</em></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Notes/" class="category-chain-item">Notes</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/Vue/">#Vue</a>
+      
+        <a href="/z/tags/Vite/">#Vite</a>
+      
+        <a href="/z/tags/Vuetify/">#Vuetify</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Vite + Vue2 + Vuetify2 + script setup + TypeScript 搭配开发项目</div>
+      <div>https://cocomi.cf/z/posts/fb7525a/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月4日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/db4d19bf/" title="npm WARN config global `--global` are deprecated 解决办法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">npm WARN config global `--global` are deprecated 解决办法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/47c73f2e/" title="如何让 Windows 把 TypeScript 文件当作文本文件">
+                        <span class="hidden-mobile">如何让 Windows 把 TypeScript 文件当作文本文件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言本文主要针对 AngularJS 的初学者而编写的一篇关于如何在 AngularJS 框架下更好的编写代码的一个指南。下文将对 AngularJS 进行简称，替代为 NG。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AngularJS 中 Controller 与 Service 的分层设计编码">
+<meta property="og:url" content="https://cocomi.cf/z/posts/41b22377/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="前言本文主要针对 AngularJS 的初学者而编写的一篇关于如何在 AngularJS 框架下更好的编写代码的一个指南。下文将对 AngularJS 进行简称，替代为 NG。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-12-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-12-29T16:00:00.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="AngularJS">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AngularJS 中 Controller 与 Service 的分层设计编码 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AngularJS 中 Controller 与 Service 的分层设计编码"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-12-30 00:00" pubdate>
+          2017年12月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">AngularJS 中 Controller 与 Service 的分层设计编码</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要针对 AngularJS 的初学者而编写的一篇关于如何在 AngularJS 框架下更好的编写代码的一个指南。下文将对 AngularJS 进行简称，替代为 NG。</p>
+<span id="more"></span>
+
+<h2 id="初学者的-Controller"><a href="#初学者的-Controller" class="headerlink" title="初学者的 Controller"></a>初学者的 Controller</h2><p>在接触 NG 后，如果需要通过访问远程的 API 获取一系列的数据进行显示，通常 Controller 代码会写成下面的样子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js">angular.<span class="hljs-title function_">module</span>(<span class="hljs-string">&#x27;demo&#x27;</span>)<br>  .<span class="hljs-title function_">controller</span>(<span class="hljs-string">&#x27;myCtrl&#x27;</span>, [<span class="hljs-string">&#x27;$scope&#x27;</span>, <span class="hljs-string">&#x27;$http&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, $http</span>) &#123;<br>    $http.<span class="hljs-title function_">get</span>(<span class="hljs-string">&quot;xxx&quot;</span>).<span class="hljs-title function_">success</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) &#123;<br>      $scope.<span class="hljs-property">data</span> = response.<span class="hljs-property">data</span>;<br>    &#125;);<br>  &#125;]);<br></code></pre></td></tr></table></figure>
+
+<p>这样的在功能上是没有问题的，但是会导致 Controller 除了负担与 View 层的$scope 变量的初始化和防范定义外，还需要额外注入 http 进行远程的数据调用。如果调用 API 的代码会大量被引用、或是 API 变更的时候，就会导致大面积地修改 Controller 代码。</p>
+<h2 id="分离-Service"><a href="#分离-Service" class="headerlink" title="分离 Service"></a>分离 Service</h2><h3 id="Service-层和-Controller-层的分工"><a href="#Service-层和-Controller-层的分工" class="headerlink" title="Service 层和 Controller 层的分工"></a>Service 层和 Controller 层的分工</h3><p>我们将原来全部集中在 Controller 中代码拆分成两个层面：</p>
+<ul>
+<li>service 层：主要负责数据交互和数据处理、处理一些业务领域上的逻辑；</li>
+<li>controller 层：主要负责初始化$scope 的变量用于传递给 view 层，并且处理一些页面交互产生的逻辑；</li>
+</ul>
+<h3 id="什么情况下需要编写-Service"><a href="#什么情况下需要编写-Service" class="headerlink" title="什么情况下需要编写 Service"></a>什么情况下需要编写 Service</h3><p>当一个功能涉及远程 API 调用、数据集、业务领域复杂逻辑、将会大量重复的运算方法时，就可以考虑将代码以 service 形式注入 controller 层。</p>
+<h2 id="编写-Service"><a href="#编写-Service" class="headerlink" title="编写 Service"></a>编写 Service</h2><p>将原先的代码从 Controller 中抽离处理，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js">angular.<span class="hljs-title function_">module</span>(<span class="hljs-string">&#x27;demo&#x27;</span>)<br>  .<span class="hljs-title function_">service</span>(<span class="hljs-string">&#x27;myService&#x27;</span>, [<span class="hljs-string">&#x27;$http&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$http</span>) &#123;<br>    <span class="hljs-keyword">return</span> &#123;<br>      <span class="hljs-attr">getData</span>: <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-keyword">return</span> $http.<span class="hljs-title function_">get</span>(<span class="hljs-string">&quot;xxx&quot;</span>);<br>      &#125;<br>    &#125;<br>  &#125;]);<br></code></pre></td></tr></table></figure>
+
+<p>则 Controller 的代码将会被注入 myService 用于获取相关的数据</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js">angular.<span class="hljs-title function_">module</span>(<span class="hljs-string">&#x27;demo&#x27;</span>)<br>  .<span class="hljs-title function_">controller</span>(<span class="hljs-string">&#x27;myCtrl&#x27;</span>, [<span class="hljs-string">&#x27;$scope&#x27;</span>, <span class="hljs-string">&#x27;myService&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, $http, myService</span>) &#123;<br>    myService.<span class="hljs-title function_">getData</span>().<span class="hljs-title function_">success</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) &#123;<br>      $scope.<span class="hljs-property">data</span> = response.<span class="hljs-property">data</span>;<br>    &#125;);<br>  &#125;]);<br></code></pre></td></tr></table></figure>
+
+<p>这样的代码看上去是很不错了，但是我们依旧在 Controller 层处理了通讯时的回调函数 success, 这样 controller 虽然直接依赖 http 了，但是还是间接的需要处理 http。</p>
+<h2 id="在-Service-层处理通讯回调，将业务回调传递给-Controller-层"><a href="#在-Service-层处理通讯回调，将业务回调传递给-Controller-层" class="headerlink" title="在 Service 层处理通讯回调，将业务回调传递给 Controller 层"></a>在 Service 层处理通讯回调，将业务回调传递给 Controller 层</h2><p>这里需要引入 deffered 将 http 的通讯级的回调在 Service 层处理完后，再重新交由 controller 去处理其他的问题。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs js">angular.<span class="hljs-title function_">module</span>(<span class="hljs-string">&#x27;demo&#x27;</span>)<br>  .<span class="hljs-title function_">service</span>(<span class="hljs-string">&#x27;myService&#x27;</span>, [<span class="hljs-string">&#x27;$http&#x27;</span>, <span class="hljs-string">&#x27;$q&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$http, $q</span>) &#123;<br>    <span class="hljs-keyword">return</span> &#123;<br>      <span class="hljs-attr">getData</span>: <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-keyword">var</span> deferred = $q.<span class="hljs-title function_">defer</span>();<br>        <span class="hljs-keyword">var</span> promise = $http.<span class="hljs-title function_">get</span>(<span class="hljs-string">&quot;xxx&quot;</span>);<br>        promise.<span class="hljs-title function_">then</span>(<br>          <span class="hljs-comment">// 通讯成功的处理</span><br>          <span class="hljs-keyword">function</span> (<span class="hljs-params">answer</span>) &#123;<br>            <span class="hljs-comment">//在这里可以对返回的数据集做一定的处理，再交由 controller 进行处理</span><br>            answer.<span class="hljs-property">status</span> = <span class="hljs-literal">true</span>;<br>            deferred.<span class="hljs-title function_">resolve</span>(answer);<br>          &#125;,<br>          <span class="hljs-comment">// 通讯失败的处理</span><br>          <span class="hljs-keyword">function</span> (<span class="hljs-params">error</span>) &#123;<br>            <span class="hljs-comment">// 可以先对失败的数据集做处理，再交由 controller 进行处理</span><br>            error.<span class="hljs-property">status</span> = <span class="hljs-literal">false</span>;<br>            deferred.<span class="hljs-title function_">reject</span>(error);<br>          &#125;);<br>        <span class="hljs-comment">//返回 promise 对象，交由 controller 继续处理成功、失败的业务回调</span><br>        <span class="hljs-keyword">return</span> deferred.<span class="hljs-property">promise</span>;<br>      &#125;<br>    &#125;<br>  &#125;]);<br></code></pre></td></tr></table></figure>
+
+<p>相应的在 controller 中我们也可以进行相关事件的处理，修改代码如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js">angular.<span class="hljs-title function_">module</span>(<span class="hljs-string">&#x27;demo&#x27;</span>)<br>  .<span class="hljs-title function_">controller</span>(<span class="hljs-string">&#x27;myCtrl&#x27;</span>, [<span class="hljs-string">&#x27;$scope&#x27;</span>, <span class="hljs-string">&#x27;myService&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, myService</span>) &#123;<br>    myService.<span class="hljs-title function_">getData</span>().<span class="hljs-title function_">then</span>(<br>      <span class="hljs-keyword">function</span> (<span class="hljs-params">answer</span>) &#123;<br>        $scope.<span class="hljs-property">data</span> = answer;<br>      &#125;,<br>      <span class="hljs-keyword">function</span> (<span class="hljs-params">error</span>) &#123;<br>        $scope.<span class="hljs-property">error</span> = error;<br>      &#125;<br>    );<br>  &#125;]);<br></code></pre></td></tr></table></figure>
+
+<p>这样 controller 和 service 的职能分离，并且 controller 完全不依赖 http 而只是依赖 service 传递的事件和数据。再编写测试代码时，其逻辑也会变得简单。并且多个 controller 可以调用一个 service 中相同的方法，而不是通过曾经那种复制的方法来解决。</p>
+<p>分层编写代码的最终目的无非就是：</p>
+<ol>
+<li>增加代码的复用性；</li>
+<li>代码责任简单，不会又做保姆又做司机，可读性强容易理解；</li>
+<li>编写测试代码的时候容易编写；</li>
+<li>减少对一些框架和环境插件的依赖；</li>
+<li>修改逻辑时最小幅度的修改代码</li>
+<li>数据层发生变更修改 Service,UI 层有变化则修改 Controller。不用担心改 controller 把 service 也一起带到沟里的情况发生。</li>
+</ol>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>AngularJS 在许多框架的设计方面与 Java 的 Spring 非常类似，如果有一定的 Java 基础应该很能理解并写出分层的代码。</p>
+<h2 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h2><p>作者：AkiraPan<br>链接：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1e1aaf0fd30a">https://www.jianshu.com/p/1e1aaf0fd30a</a><br>来源：简书</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Repost/" class="category-chain-item">Repost</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/AngularJS/">#AngularJS</a>
+      
+        <a href="/z/tags/JavaScript/">#JavaScript</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AngularJS 中 Controller 与 Service 的分层设计编码</div>
+      <div>https://cocomi.cf/z/posts/41b22377/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2017年12月30日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/a6cb3820/" title="AngularJs 开发的一些基本准则">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AngularJs 开发的一些基本准则</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/622167e/" title="Markdown 样式测试">
+                        <span class="hidden-mobile">Markdown 样式测试</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

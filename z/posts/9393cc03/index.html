@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="没有人喜欢自己的隐私数据被收集、被利用，也没有人喜欢自己被跨网站、跨设备的跟踪浏览行为、制作用户画像、精准投递广告。作为一个非商用的小站，是时候向诸如谷歌统计、百度统计、51La 等说再见了，只关注关键的几个数据，全程匿名化处理，隐私至上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Umami 统计个人网站访问数据">
+<meta property="og:url" content="https://cocomi.cf/z/posts/9393cc03/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="没有人喜欢自己的隐私数据被收集、被利用，也没有人喜欢自己被跨网站、跨设备的跟踪浏览行为、制作用户画像、精准投递广告。作为一个非商用的小站，是时候向诸如谷歌统计、百度统计、51La 等说再见了，只关注关键的几个数据，全程匿名化处理，隐私至上。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/00b728940b873dc3d3e940fc268dd2e5_2276870465142348577.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/b102b6200c907411994c8b9bec6e3bb4_2303785330596306678.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/f151de781d0cf1d13f359e841f0117e3_1731019309529313289.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/36850ff2abe78ddf57596b20c524bc61_8099389476793374314.png">
+<meta property="article:published_time" content="2022-08-21T07:21:21.000Z">
+<meta property="article:modified_time" content="2022-08-21T07:21:21.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="Umami">
+<meta property="article:tag" content="Analysis">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/00b728940b873dc3d3e940fc268dd2e5_2276870465142348577.png">
+  
+  
+  
+  <title>使用 Umami 统计个人网站访问数据 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="使用 Umami 统计个人网站访问数据"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-21 15:21" pubdate>
+          2022年8月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">使用 Umami 统计个人网站访问数据</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>没有人喜欢自己的隐私数据被收集、被利用，也没有人喜欢自己被跨网站、跨设备的跟踪浏览行为、制作用户画像、精准投递广告。作为一个非商用的小站，是时候向诸如谷歌统计、百度统计、51La 等说再见了，只关注关键的几个数据，全程匿名化处理，隐私至上。</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="关于-Umami"><a href="#关于-Umami" class="headerlink" title="关于 Umami"></a>关于 Umami</h2><p>Umami 是一个开源的、以隐私为中心的 Google Analytics 替代方案。Umami 提供强大的网络分析解决方案，不会侵犯用户隐私。此外，当自行托管 Umami 时，可以完全控制自己的数据。</p>
+<blockquote>
+<p>Umami 基于 Node.js 开发，支持 Mysql 和 Postgresql 数据库，除服务器外，它甚至可以部署在 Serverless 中。自部署的好处在于某些商业服务滥用用户数据，当数据保存在自己手中时可以确保不会分享给第三方（如果你查阅 Umami 的数据库，你甚至可以发现它连用户 IP 都没有收集）。</p>
+</blockquote>
+<blockquote>
+<p>此外由于现有的商用统计分析系统过于臭名昭著，绝大部分隐私拦截插件（如隐私獾）都对其脚本进行了过滤，在保护了访客隐私的同时却导致了统计数据不精准，而 Umami 可以重写脚本名称及绑定用户自己的域名，最大程度上避免被误拦截（因为本身不收集隐私、理直气壮）。</p>
+</blockquote>
+<p>查看 Umami 功能示例：🔗<a target="_blank" rel="noopener" href="https://app.umami.is/share/8rmHaheU/umami.is">Live Demo</a> 。</p>
+<h2 id="如何搭建"><a href="#如何搭建" class="headerlink" title="如何搭建"></a>如何搭建</h2><p>本文使用 Serverless 平台来搭建 Umami，应用部署在 <a target="_blank" rel="noopener" href="https://vercel.com/">Vercel</a>，数据库使用 <a target="_blank" rel="noopener" href="https://planetscale.com/">PlanetScale</a>，其他平台参见 <a target="_blank" rel="noopener" href="https://umami.is/docs">官网文档</a></p>
+<h3 id="数据库部分"><a href="#数据库部分" class="headerlink" title="数据库部分"></a>数据库部分</h3><p><a target="_blank" rel="noopener" href="https://planetscale.com/">PlanetScale</a> 是一个兼容 MySQL 的无服务器数据库平台。 PlanetScale 平台不支持外键，因此需要修改 <code>schema.mysql.sql</code> 。</p>
+<p>其他数据库参见官网文档  <a target="_blank" rel="noopener" href="https://umami.is/docs/hosting">Hosting</a> <code>Managed databases</code> 部分。</p>
+<ol>
+<li>使用魔法登录 PlanetScale 并创建一个数据库，名字假如为 umami-db ，获取连接字符串，<code>连接方式</code> 要选择 <code>Prisma</code>，字符串形如：<code>mysql://username:password@host/umami-db?sslaccept=strict</code> ，然后初始密码看不到，要自己新建一个数据库密码</li>
+</ol>
+<p>  <img src="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/00b728940b873dc3d3e940fc268dd2e5_2276870465142348577.png" srcset="/z/img/loading.gif" lazyload alt="图 1"></p>
+<ol start="2">
+<li>打开 <a target="_blank" rel="noopener" href="https://github.com/umami-software/umami/blob/master/sql/schema.mysql.sql">schema.mysql.sql</a> ，删除所有以外键 (<code>-- AddForeignKey</code>) 开头的行，并确保逗号准确。</li>
+<li>初始化数据库</li>
+</ol>
+<ul>
+<li><p>打开 PlanetScale Web 控制台，从 <code>Branches</code> &gt; <code>main</code> &gt; <code>Console</code> 进入，复制 <code>schema.mysql.sql</code> 中语句，每次运行一条语句</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/b102b6200c907411994c8b9bec6e3bb4_2303785330596306678.png" srcset="/z/img/loading.gif" lazyload alt="图 2"></p>
+</li>
+<li><p>另外也可以使用 <a target="_blank" rel="noopener" href="https://github.com/planetscale/cli/releases">PlanetScale CLI</a> 来初始化</p>
+<ol>
+<li>使用 <code>pscale auth login</code> 登录</li>
+<li>在项目根目录运行 <code>pscale shell umami-db main &lt; sql/schema.mysql.sql</code></li>
+</ol>
+</li>
+</ul>
+<ol start="4">
+<li>查看表是否已经建好，或者去 <code>Schema</code> 页面查看</li>
+</ol>
+<p>  <img src="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/f151de781d0cf1d13f359e841f0117e3_1731019309529313289.png" srcset="/z/img/loading.gif" lazyload alt="图 3"></p>
+<h3 id="Vercel-部分"><a href="#Vercel-部分" class="headerlink" title="Vercel 部分"></a>Vercel 部分</h3><p>此时数据库已经初始化完毕，接下来将应用部署在 Vercel 上。</p>
+<ol>
+<li><p><a target="_blank" rel="noopener" href="https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fmikecao%2Fumami&amp;env=DATABASE_URL,HASH_SALT&amp;envDescription=These%20values%20are%20defined%20in%20the%20configure%20Umami%20step%20from%20Install&amp;envLink=https%3A%2F%2Fumami.is%2Fdocs%2Finstall&amp;project-name=umami&amp;repo-name=umami">点击一键部署</a></p>
+</li>
+<li><p>手动部署</p>
+</li>
+</ol>
+<ul>
+<li><p>Fork Umami 的仓库: <a target="_blank" rel="noopener" href="https://github.com/umami-software/umami">https://github.com/umami-software/umami</a> 到自己的 GitHub</p>
+</li>
+<li><p>注册一个 Vercel 帐户并登录（已有跳过）。</p>
+</li>
+<li><p>访问 <a target="_blank" rel="noopener" href="https://vercel.com/new">https://vercel.com/new</a> 页面，从 GitHub 上导入项目。</p>
+</li>
+<li><p>添加所需的环境变量 DATABASE_URL 和 HASH_SALT（随机字符串）。</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/08/21/260511332/36850ff2abe78ddf57596b20c524bc61_8099389476793374314.png" srcset="/z/img/loading.gif" lazyload alt="图 4"></p>
+</li>
+<li><p>点击部署按钮，然后可以访问 <code>&lt;deploy-id&gt;.vercel.app</code> 查看效果。</p>
+</li>
+<li><p>后续可以在 <code>Settings</code> &gt; <code>Environment Variables</code> 编辑环境变量，需要重新部署服务生效</p>
+</li>
+</ul>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><h3 id="接入网站"><a href="#接入网站" class="headerlink" title="接入网站"></a>接入网站</h3><blockquote>
+<p>配置完成网站后打开，使用初始用户名密码登录 admin:umami。登录完成后可在右上角个人资料，更新密码处修改默认信息。接着个人资料，网站，添加网址处接入待统计的网站，如果勾选了启用共享链接，代表可以将该网站的统计数据分享给他人查看。</p>
+</blockquote>
+<blockquote>
+<p>添加网站后，在网站列表的获取跟踪代码按钮处点击，复制具体内容到标签中，注：如果开启了自定义脚本名称，此处的链接文件需要手动替换。</p>
+</blockquote>
+<h3 id="跟踪事件"><a href="#跟踪事件" class="headerlink" title="跟踪事件"></a>跟踪事件</h3><blockquote>
+<p>Umami 的自定义跟踪事件有些鸡肋，只能做到统计数量。支持两类：一是 CSS 类，也就是 <code>umami--&lt;event&gt;--&lt;event-name&gt;</code> 打标方式；另一种是在加载完成 Umami 文件后，提供了 umami 对象，可以调用一些方法，两种方式其实都挺勉强。</p>
+</blockquote>
+<h4 id="使用-CSS-类名"><a href="#使用-CSS-类名" class="headerlink" title="使用 CSS 类名"></a>使用 CSS 类名</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;signup-button&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;button umami--click--signup-button&quot;</span>&gt;</span>Sign up<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>格式：<code>umami--&lt;event&gt;--&lt;event-name&gt;</code>，<code>&lt;event&gt;</code> 取值见 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/Events">https://developer.mozilla.org/en-US/docs/Web/Events</a></p>
+<p>注意不要使用一些频繁触发的事件，如 <code>scroll</code> 或 <code>drag</code></p>
+<h4 id="使用-JavaScript"><a href="#使用-JavaScript" class="headerlink" title="使用 JavaScript"></a>使用 JavaScript</h4><p>在 umami 加载完成后：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> button = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;signup-button&#x27;</span>);<br><br>button.<span class="hljs-property">onclick</span> = <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">umami</span>(<span class="hljs-string">&#x27;Signup button click&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>详情见官网文档：<a target="_blank" rel="noopener" href="https://umami.is/docs/track-events">https://umami.is/docs/track-events</a></p>
+<h3 id="在-hexo-中使用"><a href="#在-hexo-中使用" class="headerlink" title="在 hexo 中使用"></a>在 hexo 中使用</h3><p>如果主题没有适配 umami 的话，可以使用 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/api/injector">hexo injector</a> 直接注入，hexo 版本需要大于 5</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// &lt;博客项目根目录&gt;/scripts/injector.js</span><br>hexo.<span class="hljs-property">extend</span>.<span class="hljs-property">injector</span>.<span class="hljs-title function_">register</span>(<span class="hljs-string">&#x27;head_end&#x27;</span>, <span class="hljs-string">&#x27;&lt;script async defer data-website-id=&quot;&lt;your-website-id&gt;&quot; src=&quot;&lt;your-umami-url&gt;&quot;&gt;&lt;/script&gt;&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://umami.is/docs/getting-started">Umami Documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://inkss.cn/blog/f7886cf2">枋柚梓 - 自建个人网站数据统计分析系统</a></p>
+<hr>
+<p><em>fin.</em></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Notes/" class="category-chain-item">Notes</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/Umami/">#Umami</a>
+      
+        <a href="/z/tags/Analysis/">#Analysis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>使用 Umami 统计个人网站访问数据</div>
+      <div>https://cocomi.cf/z/posts/9393cc03/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月21日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/d845bf65/" title="本地 https 环境解决方案">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">本地 https 环境解决方案</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/854aec20/" title="利用用户脚本优化 Yandere/Konachan 站点浏览体验">
+                        <span class="hidden-mobile">利用用户脚本优化 Yandere/Konachan 站点浏览体验</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

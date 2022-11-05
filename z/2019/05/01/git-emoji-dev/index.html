@@ -1,0 +1,307 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#986DB2"><meta name="author" content="Sakura Yumine"><meta name="copyright" content="Sakura Yumine"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>在 Git 提交信息中使用 Emoji | Himekana's</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.24/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_j5gk85dg4pf.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link id="light-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism.css" media="(prefers-color-scheme: light)"><link id="dark-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism-tomorrow.css" media="(prefers-color-scheme: dark)"><link rel="icon" href="/z/images/favicon.ico"><link rel="mask-icon" href="/z/images/favicon.ico" color="#986DB2"><link rel="alternate icon" href="/z/yun.ico"><link rel="preload" href="/z/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/z/js/utils.js" as="script"><link rel="preload" href="/z/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/z/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"asadahimeka.github.io","root":"/z/","title":"ヒメカナ","version":"1.6.1","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"検索...","empty":"${query} が見つかりませんでした.","hits":"${hits} 件見つかりました","hits_time":"${hits} 件見つかりました, ${time} ミリ秒"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn?c=i","hitokoto":true},"local_search":{"path":"/z/search.xml"}};
+  </script><link rel="stylesheet" href="/z/css/hexo-theme-yun.css"><script src="/z/js/utils.js"></script><script src="/z/js/hexo-theme-yun.js"></script><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml"><link rel="stylesheet" href="/z/css/custom.css"><script src="//at.alicdn.com/t/font_2598701_iaz8nhub3w.js" async></script><meta name="description" content="Gitmoji 旨在解释如何在 Git 提交消息时使用表情符号。在提交信息时使用表情符号，可以更容易地识别提交的目的或意图。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Git 提交信息中使用 Emoji">
+<meta property="og:url" content="https://asadahimeka.github.io/z/2019/05/01/git-emoji-dev/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="Gitmoji 旨在解释如何在 Git 提交消息时使用表情符号。在提交信息时使用表情符号，可以更容易地识别提交的目的或意图。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://cloud.githubusercontent.com/assets/7629661/20073135/4e3db2c2-a52b-11e6-85e1-661a8212045a.gif">
+<meta property="og:image" content="https://user-images.githubusercontent.com/7629661/41189947-1de56124-6bd6-11e8-9567-e7f1a8e99500.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/7629661/41189878-d24a3b78-6bd4-11e8-8d47-c8edf3b87e53.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/7629661/41189877-d22b145a-6bd4-11e8-97f8-a8e36bcab062.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/7629661/41189876-d21167ee-6bd4-11e8-9008-4c987502f307.png">
+<meta property="article:published_time" content="2019-04-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2019-04-30T16:00:00.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="Emoji">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cloud.githubusercontent.com/assets/7629661/20073135/4e3db2c2-a52b-11e6-85e1-661a8212045a.gif"><script src="/z/js/ui/mode.js"></script><meta name="referrer" content="no-referrer"></head><body><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/z/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="見出し"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="概要"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/z/about/" title="Sakura Yumine"><img width="96" loading="lazy" src="/z/images/avatar.jpg" alt="Sakura Yumine"><span class="site-author-status" title="迷い込んだ">🌠</span></a><div class="site-author-name"><a href="/z/about/">Sakura Yumine</a></div><a class="site-name" href="/z/about/site.html">Himekana's</a><sub class="site-subtitle">Nanashi.</sub><div class="site-desciption">Nothing to say.</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/z/" title="ホーム"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/z/archives/" title="アーカイブ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">16</span></a></div><div class="site-state-item"><a href="/z/categories/" title="カテゴリ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><div class="site-state-item"><a href="/z/tags/" title="タグ"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">19</span></a></div><a class="site-state-item hty-icon-button" href="/z/albums/" title="Albums"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/z/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://794545154.qzone.qq.com/" title="Qzone" target="_blank" style="color:#fbce00"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qzone"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/asadahimeka" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://weibo.com/smallstar9637" title="微博" target="_blank" style="color:#E6162D"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=73306134" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/8051085" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://bgm.tv/user/234864" title="bangumi" target="_blank" style="color:#F09199"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-pgc_bangumi"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.coolapk.com/u/496417" title="酷安" target="_blank" style="color:#0f9d58"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-coolapk1"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.instagram.com/asadahimeka/" title="Instagram" target="_blank" style="color:#FF1F75"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-Instagramlogo"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://twitter.com/soigneehimeka" title="Twitter" target="_blank" style="color:#1da1f2"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-twitter-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://t.me/himekana" title="Telegram" target="_blank" style="color:#0088CC"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-telegram-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:smallstar9637@yahoo.co.jp" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/z/bangumi/" title="My Bangumi List" style="color:#5db2e6"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-unordered"></use></svg></a><a class="links-item hty-icon-button" href="/z/girls/" title="Favorite Girls" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Emoji-%E5%88%97%E8%A1%A8"><span class="toc-number">1.</span> <span class="toc-text">Emoji 列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gitmoji-cli"><span class="toc-number">2.</span> <span class="toc-text">gitmoji-cli</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">命令行使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Commit"><span class="toc-number">3.1.</span> <span class="toc-text">Commit</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Client"><span class="toc-number">3.1.1.</span> <span class="toc-text">Client</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hook"><span class="toc-number">3.1.2.</span> <span class="toc-text">Hook</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Search"><span class="toc-number">3.2.</span> <span class="toc-text">Search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List"><span class="toc-number">3.3.</span> <span class="toc-text">List</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Update"><span class="toc-number">3.4.</span> <span class="toc-text">Update</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Config"><span class="toc-number">3.5.</span> <span class="toc-text">Config</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Options"><span class="toc-number">3.5.1.</span> <span class="toc-text">Options</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#REF"><span class="toc-number">4.</span> <span class="toc-text">REF</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://asadahimeka.github.io/z/z/2019/05/01/git-emoji-dev/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Sakura Yumine"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Himekana's"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">在 Git 提交信息中使用 Emoji</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="作成日：2019-05-01 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-01T00:00:00+08:00">2019-05-01</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="単語数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="単語数">829</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="読書の時間"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="読書の時間">3m</span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/z/tags/Emoji/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Emoji</span></a><a class="tag-item" href="/z/tags/Git/" style="--text-color:#F14E32"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Git</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#986DB2;"><!-- <p align="center">
+    <a target="_blank" rel="noopener" href="https://gitmoji.dev">
+        <img src="https://cloud.githubusercontent.com/assets/7629661/20073135/4e3db2c2-a52b-11e6-85e1-661a8212045a.gif" width="456" alt="gitmoji" loading="lazy">
+    </a>
+</p> -->
+
+<p><a target="_blank" rel="noopener" href="https://gitmoji.dev/">Gitmoji</a> 旨在解释如何在 <strong>Git 提交消息时使用表情符号</strong>。在<strong>提交信息</strong>时<strong>使用表情符号</strong>，可以更容易地<strong>识别提交的目的或意图</strong>。</p>
+<span id="more"></span>
+
+<h2 id="Emoji-列表"><a href="#Emoji-列表" class="headerlink" title="Emoji 列表"></a>Emoji 列表</h2><p>🎨 ：优化项目结构 / 代码格式</p>
+<pre class="language-none"><code class="language-none">:art:</code></pre>
+
+<p>⚡️ ：性能提升</p>
+<pre class="language-none"><code class="language-none">:zap:</code></pre>
+
+<p>🔥 ：移除代码或文件</p>
+<pre class="language-none"><code class="language-none">:fire:</code></pre>
+
+<p>🐛 ： 修改 bug</p>
+<pre class="language-none"><code class="language-none">:bug:</code></pre>
+
+<p>🚑️：紧急修复 / Critical hotfix</p>
+<pre class="language-none"><code class="language-none">:ambulance:</code></pre>
+
+<p>✨ : 引入新功能</p>
+<pre class="language-none"><code class="language-none">:sparkles:</code></pre>
+
+<p>📝 ：更新文档</p>
+<pre class="language-none"><code class="language-none">:memo:</code></pre>
+
+<p>🚀 ： 部署工作</p>
+<pre class="language-none"><code class="language-none">:rocket:</code></pre>
+
+<p>💄 ： UI / 样式更新</p>
+<pre class="language-none"><code class="language-none">:lipstick:</code></pre>
+
+<p>🎉 ： 初始化项目</p>
+<pre class="language-none"><code class="language-none">:tada:</code></pre>
+
+<p>✅ ： 添加或更新测试用例</p>
+<pre class="language-none"><code class="language-none">:white_check_mark:</code></pre>
+
+<p>🔒️ ： 修复安全问题</p>
+<pre class="language-none"><code class="language-none">:lock:</code></pre>
+
+<p>🔖 : 发布版本 / 创建 tag</p>
+<pre class="language-none"><code class="language-none">:bookmark:</code></pre>
+
+<p>🚨 ：修复编译器 / linter 报错</p>
+<pre class="language-none"><code class="language-none">:rotating_light:</code></pre>
+
+<p>🚧 ： 建设中 / WIP / Work in progress.</p>
+<pre class="language-none"><code class="language-none">:construction:</code></pre>
+
+<p>💚 ： 修复 CI 构建问题</p>
+<pre class="language-none"><code class="language-none">:green_heart:</code></pre>
+
+<p>⬇️ ： 依赖版本降级</p>
+<pre class="language-none"><code class="language-none">:arrow_down:</code></pre>
+
+<p>⬆️ ： 依赖版本升级</p>
+<pre class="language-none"><code class="language-none">:arrow_up:</code></pre>
+
+<p>📌 ：锁定依赖版本</p>
+<pre class="language-none"><code class="language-none">:pushpin:</code></pre>
+
+<p>👷 ：添加或更新自动构建 / 持续集成</p>
+<pre class="language-none"><code class="language-none">:construction_worker:</code></pre>
+
+<p>📈 ： 添加或更新分析追踪代码</p>
+<pre class="language-none"><code class="language-none">:chart_with_upwards_trend:</code></pre>
+
+<p>♻️ ：代码重构</p>
+<pre class="language-none"><code class="language-none">:recycle:</code></pre>
+
+<p>➕ ：添加依赖</p>
+<pre class="language-none"><code class="language-none">:heavy_plus_sign:</code></pre>
+
+<p>➖ ： 移除依赖</p>
+<pre class="language-none"><code class="language-none">:heavy_minus_sign:</code></pre>
+
+<p>🔧 ：更新配置文件</p>
+<pre class="language-none"><code class="language-none">:wrench:</code></pre>
+
+<p>🔨 ： 更新开发脚本</p>
+<pre class="language-none"><code class="language-none">:hammer:</code></pre>
+
+<p>🌐 ：国际化与本地化</p>
+<pre class="language-none"><code class="language-none">:globe_with_meridians:</code></pre>
+
+<p>✏️ ：修复错字 / Fix typos.</p>
+<pre class="language-none"><code class="language-none">:pencil2:</code></pre>
+
+<p>💩 ： 后续要优化的代码</p>
+<pre class="language-none"><code class="language-none">:poop:</code></pre>
+
+<p>⏪️ ： 回滚更新 / Revert changes.</p>
+<pre class="language-none"><code class="language-none">:rewind:</code></pre>
+
+<p>🔀 ：合并分支</p>
+<pre class="language-none"><code class="language-none">:twisted_rightwards_arrows:</code></pre>
+
+<p>📦️ ：更新打包文件</p>
+<pre class="language-none"><code class="language-none">:package:</code></pre>
+
+<p>👽️ ： 外部 API 导致的代码更新</p>
+<pre class="language-none"><code class="language-none">:alien:</code></pre>
+<p>🚚  ：移动或重命名资源 (e.g.: files, paths, routes).</p>
+<pre class="language-none"><code class="language-none">:truck:</code></pre>
+
+<p>📄 ： 更新许可证</p>
+<pre class="language-none"><code class="language-none">:page_facing_up:</code></pre>
+
+<p>💥 ：引入破坏性更新 / breaking changes.</p>
+<pre class="language-none"><code class="language-none">:boom:</code></pre>
+
+<p>🍱 : 更新资源 / assets.</p>
+<pre class="language-none"><code class="language-none">:bento:</code></pre>
+
+<p>♿️ ：提升无障碍体验</p>
+<pre class="language-none"><code class="language-none">:wheelchair:</code></pre>
+
+<p>💡 ：更新代码注释</p>
+<pre class="language-none"><code class="language-none">:bulb:</code></pre>
+
+<p>🍻 ：Write code drunkenly.</p>
+<pre class="language-none"><code class="language-none">:beers:</code></pre>
+
+<p>💬 ： 修改文本 /  text and literals.</p>
+<pre class="language-none"><code class="language-none">:speech_balloon:</code></pre>
+
+<p>🗃️ : 数据库相关操作</p>
+<pre class="language-none"><code class="language-none">:card_file_box:</code></pre>
+
+<p>🔊 ： 添加更新日志</p>
+<pre class="language-none"><code class="language-none">:loud_sound:</code></pre>
+
+<p>🔇 ：移除运行日志</p>
+<pre class="language-none"><code class="language-none">:mute:</code></pre>
+
+<p>👥 ：更新贡献者</p>
+<pre class="language-none"><code class="language-none">:busts_in_silhouette:</code></pre>
+
+<p>🚸 提升用户体验与可用性 / UE &amp; usability</p>
+<pre class="language-none"><code class="language-none">:children_crossing:</code></pre>
+
+<p>🏗️ : 更改架构 / Make architectural changes.</p>
+<pre class="language-none"><code class="language-none">:building_construction:</code></pre>
+
+<p>📱 : 响应式设计工作</p>
+<pre class="language-none"><code class="language-none">:iphone:</code></pre>
+
+<p>🤡 ：Mock 数据</p>
+<pre class="language-none"><code class="language-none">:clown_face:</code></pre>
+
+<p>🥚 ：添加彩蛋</p>
+<pre class="language-none"><code class="language-none">:egg:</code></pre>
+
+<p>🙈 ：更新 .gitignore 文件</p>
+<pre class="language-none"><code class="language-none">:see_no_evil:</code></pre>
+
+<p>📸 ：更新快照 / snapshots</p>
+<pre class="language-none"><code class="language-none">:camera_flash:</code></pre>
+
+<p>⚗️ ： 实验性功能</p>
+<pre class="language-none"><code class="language-none">:alembic:</code></pre>
+
+<p>🔍️ ： SEO 优化</p>
+<pre class="language-none"><code class="language-none">:mag:</code></pre>
+
+<p>🏷️ ： Add or update types.</p>
+<pre class="language-none"><code class="language-none">:label:</code></pre>
+
+<p>🌱 ： Add or update seed files.</p>
+<pre class="language-none"><code class="language-none">:seedling:</code></pre>
+
+<p>🚩 ： 更新功能标记 / feature flags.</p>
+<pre class="language-none"><code class="language-none">:triangular_flag_on_post:</code></pre>
+
+<p>🥅 ：异常捕获</p>
+<pre class="language-none"><code class="language-none">:goal_net:</code></pre>
+
+<p>💫 ： 更新动画过渡效果</p>
+<pre class="language-none"><code class="language-none">:dizzy:</code></pre>
+
+<p>🗑️ ：待清理的弃用代码</p>
+<pre class="language-none"><code class="language-none">:wastebasket:</code></pre>
+
+<p>🛂 ：Work on code related to authorization, roles and permissions.</p>
+<pre class="language-none"><code class="language-none">:passport_control:</code></pre>
+
+<p>🩹 ： 简单问题修复</p>
+<pre class="language-none"><code class="language-none">:adhesive_bandage:</code></pre>
+
+<p>🧐 ：数据检查 / Data exploration/inspection.</p>
+<pre class="language-none"><code class="language-none">:monocle_face:</code></pre>
+
+<p>⚰️ ：移除无用代码</p>
+<pre class="language-none"><code class="language-none">:coffin:</code></pre>
+
+<h2 id="gitmoji-cli"><a href="#gitmoji-cli" class="headerlink" title="gitmoji-cli"></a>gitmoji-cli</h2><p>也可以通过安装 <a target="_blank" rel="noopener" href="https://github.com/carloscuesta/gitmoji-cli">gitmoji-cli</a> 在命令行中使用 gitmoji。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> i -g gitmoji-cli</code></pre>
+
+<h2 id="命令行使用"><a href="#命令行使用" class="headerlink" title="命令行使用"></a>命令行使用</h2><pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji --help</code></pre>
+
+<pre class="language-none"><code class="language-none">A gitmoji interactive client for using gitmojis on commit messages.
+
+  Usage
+    $ gitmoji
+  Options
+    --init, -i      Initialize gitmoji as a commit hook
+    --remove, -r    Remove a previously initialized commit hook
+    --config, -g    Setup gitmoji-cli preferences.
+    --commit, -c    Interactively commit using the prompts
+    --list, -l      List all the available gitmojis
+    --search, -s    Search gitmojis
+    --version, -v   Print gitmoji-cli installed version
+    --update, -u    Sync emoji list with the repo</code></pre>
+
+<h3 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h3><p>可以直接使用或通过 commit hook 使用。</p>
+<h4 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h4><p>启动命令行，会根据提示自动生成提交。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji -c</code></pre>
+
+<h4 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h4><p>初始化钩子之后，添加更改并提交，之后将开始提示并生成提交消息。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji -i
+$ <span class="token function">git</span> <span class="token function">add</span> <span class="token builtin class-name">.</span>
+$ <span class="token function">git</span> commit</code></pre>
+
+<p>⚠️ 钩子<strong>不要</strong>和 <code>gitmoji -c</code> 命令一起使用。</p>
+<p><img src="https://user-images.githubusercontent.com/7629661/41189947-1de56124-6bd6-11e8-9567-e7f1a8e99500.png" alt="gitmoji commit" loading="lazy"></p>
+<h3 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h3><p>根据关键字搜索适合的 gitmoji。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji -s <span class="token string">"criteria"</span></code></pre>
+
+<p><img src="https://user-images.githubusercontent.com/7629661/41189878-d24a3b78-6bd4-11e8-8d47-c8edf3b87e53.png" alt="gitmoji search" loading="lazy"></p>
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>打印所有可用的 gitmojis。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji -l</code></pre>
+
+<p><img src="https://user-images.githubusercontent.com/7629661/41189877-d22b145a-6bd4-11e8-97f8-a8e36bcab062.png" alt="gitmoji list" loading="lazy"></p>
+<h3 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h3><p>更新 gitmojis 列表，默认情况下，第一次运行 gitmoji 时，cli 会创建一个缓存，以在无网络的情况下使用。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ gitmoji -u</code></pre>
+
+<h3 id="Config"><a href="#Config" class="headerlink" title="Config"></a>Config</h3><p>运行 <code>gitmoji -g</code> 设置首选项。</p>
+<p><img src="https://user-images.githubusercontent.com/7629661/41189876-d21167ee-6bd4-11e8-9008-4c987502f307.png" alt="gitmoji config" loading="lazy"></p>
+<h4 id="Options"><a href="#Options" class="headerlink" title="Options"></a>Options</h4><ul>
+<li><strong>Automatic git add</strong>: 每次执行 commit 时是否自动执行 <code>git add .</code></li>
+<li><strong>Emoji format</strong>: 切换表情符号格式</li>
+<li><strong>Scope prompt</strong>: 启用或禁用 <a target="_blank" rel="noopener" href="https://www.conventionalcommits.org/en/v1.0.0/#summary">conventional commits scope prompt</a>.</li>
+<li><strong>Signed commits</strong>: 是否使用 GPG 签名提交</li>
+</ul>
+<h2 id="REF"><a href="#REF" class="headerlink" title="REF"></a>REF</h2><p><a target="_blank" rel="noopener" href="https://gitmoji.dev/">gitmoji</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/carloscuesta/gitmoji-cli/">gitmoji-cli</a></p>
+</div></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/z/2020/04/10/hexo-typora-image-upload/" rel="prev" title="hexo + typora 图片插入解决办法"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">hexo + typora 图片插入解决办法</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/z/2019/04/25/emoji-list/" rel="next" title="Emoji list"><span class="post-nav-text">Emoji list</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2017 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-heart-line"></use></svg></span><span class="author"> Sakura Yumine</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.6.1</span></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#986DB2" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="検索"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/z/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="検索..." value=""></div><div id="local-search-result"></div></div><script>const date = new Date();
+const today = (date.getMonth() + 1) + "-" + date.getDate()
+const mourn_days = ["4-4","5-12","9-18","12-13"]
+if (mourn_days.includes(today)) {
+  document.documentElement.style.filter = "grayscale(1)";
+}</script></div></body></html>

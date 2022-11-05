@@ -1,0 +1,779 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文记录如何使用 mkcert 与 nginx 快速搭建本地 https 环境，并且没有浏览器警告">
+<meta property="og:type" content="article">
+<meta property="og:title" content="本地 https 环境解决方案">
+<meta property="og:url" content="https://cocomi.cf/z/posts/d845bf65/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="本文记录如何使用 mkcert 与 nginx 快速搭建本地 https 环境，并且没有浏览器警告">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/ebfd14c62279607cb9ebc1141f6a0826_2814762419453775092.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/364475124c4888811626d048e87ba2cd_3644725119622854697.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/b70a9ba56304e657d9e1d30f3e8032c5_2994465346230218279.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/acf80e912da3366b41ebf37d0d02befb5924.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/10/16/260511332/f2b0f191e6cfcec5a3f65557900d5498_8039913934619601376.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/f8b0365166f9ba08b5257e8f8c232956_6431625309180978405.png">
+<meta property="og:image" content="https://pic.rmb.bdstatic.com/bjh/events/61d4365a7898b0ed4b445e8249d597d39598.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/3f1bd55b5bb32729bd9172a9d5092bac_4626938331097778786.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/aa62a8b8c8c2f8016116e624574b5aa3_7510037431628871874.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/edf0d9805fcaeae09992cade6f504c79_2133465381961921180.png">
+<meta property="og:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/5656eac6b3d34035834f4f8a18392181_3504489147586877598.png">
+<meta property="article:published_time" content="2022-09-24T15:13:01.000Z">
+<meta property="article:modified_time" content="2022-09-24T15:13:01.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="mkcert">
+<meta property="article:tag" content="https">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/ebfd14c62279607cb9ebc1141f6a0826_2814762419453775092.png">
+  
+  
+  
+  <title>本地 https 环境解决方案 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="本地 https 环境解决方案"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-24 23:13" pubdate>
+          2022年9月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">本地 https 环境解决方案</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>本文记录如何使用 mkcert 与 nginx 快速搭建本地 https 环境，并且没有浏览器警告</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>以前本地开发搭建 https 环境时，使用的是自签证书，由于浏览器不信任自签证书，经常需要在警告页面点击继续访问，有些麻烦：</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/ebfd14c62279607cb9ebc1141f6a0826_2814762419453775092.png" srcset="/z/img/loading.gif" lazyload alt="图 1"></p>
+<p>有时甚至没有继续访问的按钮，就需要到 <code>chrome://net-internals/#hsts</code> 里删除相关域名，更麻烦了，而且过段时间后还需要重复操作：</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/364475124c4888811626d048e87ba2cd_3644725119622854697.png" srcset="/z/img/loading.gif" lazyload alt="图 2"></p>
+<p>为了不这么麻烦，需要我们将自签证书使用的根证书添加到系统的可信 CA 证书中，这样就不会出现警告了。当然了达到这个效果需要执行一堆 <code>openssl</code> 命令，确实繁琐，好在已经有了封装了这些的小工具 —— <a target="_blank" rel="noopener" href="https://github.com/FiloSottile/mkcert">mkcert</a> 。</p>
+<h2 id="mkcert-介绍"><a href="#mkcert-介绍" class="headerlink" title="mkcert 介绍"></a>mkcert 介绍</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/FiloSottile/mkcert">mkcert</a> 是一个使用 go 语言编写的生成本地自签证书的小程序，具有跨平台、使用简单、支持多域名、自动信任 CA 等一系列方便的特性可供本地开发时快速创建 https 环境使用。</p>
+</blockquote>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/b70a9ba56304e657d9e1d30f3e8032c5_2994465346230218279.png" srcset="/z/img/loading.gif" lazyload alt="图 3"></p>
+<h2 id="mkcert-安装"><a href="#mkcert-安装" class="headerlink" title="mkcert 安装"></a>mkcert 安装</h2><h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><ul>
+<li><p>使用 <a target="_blank" rel="noopener" href="https://chocolatey.org/">Chocolatey</a> 或 <a target="_blank" rel="noopener" href="https://github.com/ScoopInstaller/scoop">Scoop</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh">choco install mkcert<br><span class="hljs-comment"># 或者</span><br>scoop bucket add extras<br>scoop install mkcert<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>或者直接下载编译好的文件</p>
+<p>访问 <a target="_blank" rel="noopener" href="https://github.com/FiloSottile/mkcert/releases">GitHub Releases</a> 下载（<a target="_blank" rel="noopener" href="https://download.fastgit.org/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-windows-amd64.exe">备用链接</a>）</p>
+<p>然后可以重命名文件为 <code>mkcert.exe</code> ，所在路径放到环境变量 Path 里，方便直接以 <code>mkcert</code> 命令运行</p>
+<p>如果运行时有问题的话，切换为以管理员运行</p>
+<p><img src="https://pic.rmb.bdstatic.com/bjh/events/acf80e912da3366b41ebf37d0d02befb5924.png" srcset="/z/img/loading.gif" lazyload alt="image-20220923104612775"></p>
+</li>
+</ul>
+<h3 id="macOS-x2F-Linux"><a href="#macOS-x2F-Linux" class="headerlink" title="macOS &#x2F; Linux"></a>macOS &#x2F; Linux</h3><p>使用 <a target="_blank" rel="noopener" href="https://brew.sh/">Homebrew</a> &#x2F; <a target="_blank" rel="noopener" href="https://docs.brew.sh/Homebrew-on-Linux">Homebrew on Linux</a></p>
+   <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">brew </span><span class="hljs-keyword">install </span>mkcert<br><span class="hljs-keyword">brew </span><span class="hljs-keyword">install </span>nss <span class="hljs-comment"># 如果使用 Firefox</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="信任-CA-证书"><a href="#信任-CA-证书" class="headerlink" title="信任 CA 证书"></a>信任 CA 证书</h2><div class="warning">
+
+<blockquote>
+<p>⚠ Warning</p>
+<p>mkcert 自动生成的 <code>rootCA-key.pem</code> 文件提供了拦截来自本机安全请求的完整能力。不要分享这个文件。</p>
+</blockquote>
+</div>
+
+<p>将 mkcert 使用的根证书加入本地可信 CA 中，以后由该 CA 签发的证书在<strong>本地</strong>都是可信的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">mkcert -install<br></code></pre></td></tr></table></figure>
+
+<img src="https://upload-bbs.mihoyo.com/upload/2022/10/16/260511332/f2b0f191e6cfcec5a3f65557900d5498_8039913934619601376.png" srcset="/z/img/loading.gif" lazyload alt="Screenshot_2022-09-23_09-25-20">
+
+<p>可能不支持火狐浏览器</p>
+<img src="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/f8b0365166f9ba08b5257e8f8c232956_6431625309180978405.png" srcset="/z/img/loading.gif" lazyload alt="Screenshot_2022-09-23_09-26-21">
+
+<p>然后可以在 Windows 的可信 CA 列表找到该证书：</p>
+<img src="https://pic.rmb.bdstatic.com/bjh/events/61d4365a7898b0ed4b445e8249d597d39598.png" srcset="/z/img/loading.gif" lazyload alt="Screenshot_2022-09-23_09-31-26">
+
+<h2 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h2><p>去官网 <a target="_blank" rel="noopener" href="http://nginx.org/en/download.html">下载 nginx</a> 或使用包管理器安装，具体步骤不再赘述</p>
+<h2 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">mkcert localhost 127.0.0.1<br><span class="hljs-comment"># 或者使用域名配合 hosts</span><br>mkcert *.example.com<br></code></pre></td></tr></table></figure>
+
+<img src="https://upload-bbs.mihoyo.com/upload/2022/09/24/260511332/3f1bd55b5bb32729bd9172a9d5092bac_4626938331097778786.png" srcset="/z/img/loading.gif" lazyload alt="image-20220923112751149">
+
+<p>会在当前目录生成证书文件和私钥文件，然后就可以用在 nginx 上了</p>
+<h2 id="使用证书"><a href="#使用证书" class="headerlink" title="使用证书"></a>使用证书</h2><p>修改 nginx 配置如下</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">443</span> ssl;<br>    <span class="hljs-comment"># 修改为所需域名或者 localhost</span><br>    <span class="hljs-attribute">server_name</span> <span class="hljs-regexp">*.example.com</span>;<br>    <span class="hljs-attribute">index</span> index.html index.htm index.php default.html default.htm default.php;<br>    <span class="hljs-attribute">root</span> html;<br><br>    <span class="hljs-comment"># 修改为生成文件目录</span><br>    <span class="hljs-attribute">ssl_certificate</span> <span class="hljs-string">&quot;cert/_wildcard.example.com.pem&quot;</span>;<br>    <span class="hljs-comment"># 修改为生成文件目录</span><br>    <span class="hljs-attribute">ssl_certificate_key</span> <span class="hljs-string">&quot;cert/_wildcard.example.com-key.pem&quot;</span>;<br>    <span class="hljs-attribute">ssl_session_cache</span> shared:SSL:<span class="hljs-number">1m</span>; <span class="hljs-attribute">ssl_session_timeout</span> <span class="hljs-number">5m</span>;<br>    <span class="hljs-attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5; <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-comment"># 此处为个人需求，代理请求到 80 端口</span><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">proxy_pass</span> http://127.0.0.1;<br>        <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$proxy_host</span>;<br>        <span class="hljs-attribute">proxy_set_header</span> X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>        <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;<br>        <span class="hljs-attribute">proxy_set_header</span> Via <span class="hljs-string">&quot;nginx&quot;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="检查是否生效"><a href="#检查是否生效" class="headerlink" title="检查是否生效"></a>检查是否生效</h2><p>运行 nginx 后访问，没有警告页面</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/aa62a8b8c8c2f8016116e624574b5aa3_7510037431628871874.png" srcset="/z/img/loading.gif" lazyload alt="图 7"></p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/edf0d9805fcaeae09992cade6f504c79_2133465381961921180.png" srcset="/z/img/loading.gif" lazyload alt="图 6"></p>
+<p>之后如果证书过期的话再重新执行一遍命令即可</p>
+<h2 id="mkcert-其他选项"><a href="#mkcert-其他选项" class="headerlink" title="mkcert 其他选项"></a>mkcert 其他选项</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cmake">-cert-<span class="hljs-keyword">file</span> <span class="hljs-keyword">FILE</span>, -key-<span class="hljs-keyword">file</span> <span class="hljs-keyword">FILE</span>, -p12-<span class="hljs-keyword">file</span> <span class="hljs-keyword">FILE</span><br>  自定义输出路径/文件名。<br><br>-client<br>  生成用于客户端身份验证的证书。<br><br>-ecdsa<br>  使用 ECDSA 密钥生成证书。<br><br>-pkcs12<br>  生成 PKCS12 格式的证书。Java 程序通常不支持 PEM 格式的证书，但是支持 PKCS12 格式的证书。<br><br>-csr CSR<br>  根据提供的 CSR 生成证书。与除 -<span class="hljs-keyword">install</span> 和 -cert-<span class="hljs-keyword">file</span> 之外的所有其他选项冲突。<br></code></pre></td></tr></table></figure>
+
+<p>注意：需要将这些选项放在域名之前</p>
+<p>例子：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">mkcert -key-file key.pem -cert-file cert.pem example.com *.example.com<br></code></pre></td></tr></table></figure>
+
+<h2 id="局域网内使用"><a href="#局域网内使用" class="headerlink" title="局域网内使用"></a>局域网内使用</h2><p>参照 <a target="_blank" rel="noopener" href="https://blog.dteam.top/posts/2019-04/%E6%9C%AC%E5%9C%B0https%E5%BF%AB%E9%80%9F%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88mkcert.html#%E5%B1%80%E5%9F%9F%E7%BD%91%E5%86%85%E4%BD%BF%E7%94%A8">https://blog.dteam.top/posts/2019-04/%E6%9C%AC%E5%9C%B0https%E5%BF%AB%E9%80%9F%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88mkcert.html#%E5%B1%80%E5%9F%9F%E7%BD%91%E5%86%85%E4%BD%BF%E7%94%A8</a> ：</p>
+<blockquote>
+<p>有时候我们需要在局域网内测试 https 应用，这种环境可能不对外，因此也无法使用像 <code>Let&#39;s encrypt</code> 这种免费证书的方案给局域网签发一个可信的证书，而且 <code>Let&#39;s encrypt</code> 本身也不支持认证 ip。</p>
+<p>先来回忆一下证书可信的三个要素：</p>
+<ul>
+<li>由可信的 CA 机构签发</li>
+<li>访问的地址跟证书认证地址相符</li>
+<li>证书在有效期内</li>
+</ul>
+<p>如果期望我们自签证书在局域网内使用，以上三个条件都需要满足。很明显自签证书一定可以满足证书在有效期内，那么需要保证后两条。我们签发的证书必须匹配浏览器的地址栏，比如局域网的 ip 或者域名，此外还需要信任 CA。</p>
+<p>我们先重新签发一下证书，加上本机的局域网 ip 认证：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">PS</span> C:\Users\abcfy&gt; mkcert localhost <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span> ::<span class="hljs-number">1</span> <span class="hljs-number">192.168</span>.<span class="hljs-number">31.170</span><br><span class="hljs-keyword">Using</span> the local CA at <span class="hljs-string">&quot;C:\Users\abcfy\AppData\Local\mkcert&quot;</span> ✨<br><br>Created a new certificate valid <span class="hljs-keyword">for</span> the following names 📜<br> - <span class="hljs-string">&quot;localhost&quot;</span><br> - <span class="hljs-string">&quot;127.0.0.1&quot;</span><br> - <span class="hljs-string">&quot;::1&quot;</span><br> - <span class="hljs-string">&quot;192.168.31.170&quot;</span><br><br>The certificate is at <span class="hljs-string">&quot;./localhost+3.pem&quot;</span> and the key at <span class="hljs-string">&quot;./localhost+3-key.pem&quot;</span> ✅<br></code></pre></td></tr></table></figure>
+
+<p>再次验证发现使用 <code>https://192.168.31.170</code> 本机访问也是可信的。然后我们需要将 CA 证书发放给局域网内其他的用户。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">PS</span> C:\Users\abcfy&gt; mkcert <span class="hljs-literal">-CAROOT</span><br>C:\Users\abcfy\AppData\Local\mkcert<br></code></pre></td></tr></table></figure>
+
+<p>使用 <code>mkcert -CAROOT</code> 命令可以列出 CA 证书的存放路径</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">PS</span> C:\Users\abcfy&gt; <span class="hljs-built_in">ls</span> <span class="hljs-variable">$</span>(mkcert <span class="hljs-literal">-CAROOT</span>)<br><br>    目录：C:\Users\abcfy\AppData\Local\mkcert<br><br>Mode                LastWriteTime         Length Name<br><span class="hljs-literal">----</span>                <span class="hljs-literal">-------------</span>         <span class="hljs-literal">------</span> <span class="hljs-literal">----</span><br><span class="hljs-literal">-a----</span>  <span class="hljs-number">2019</span><span class="hljs-literal">-04-09-</span>星期二  上午 <span class="hljs-number">1</span>           <span class="hljs-number">2484</span> rootCA<span class="hljs-literal">-key</span>.pem<br>                             <span class="hljs-number">2</span>:<span class="hljs-number">16</span><br><span class="hljs-literal">-a----</span>  <span class="hljs-number">2019</span><span class="hljs-literal">-04-09-</span>星期二  上午 <span class="hljs-number">1</span>           <span class="hljs-number">1651</span> rootCA.pem<br>                             <span class="hljs-number">2</span>:<span class="hljs-number">16</span><br></code></pre></td></tr></table></figure>
+
+<p>可以看到 CA 路径下有两个文件 <code>rootCA-key.pem</code> 和 <code>rootCA.pem</code> 两个文件，用户需要信任 <code>rootCA.pem</code> 这个文件。将 <code>rootCA.pem</code> 拷贝一个副本，并命名为 <code>rootCA.crt</code>（因为 windows 并不识别 <code>pem</code> 扩展名，并且 Ubuntu 也不会将 <code>pem</code> 扩展名作为 CA 证书文件对待），将 <code>rootCA.crt</code> 文件分发给其他用户，手工导入。</p>
+<p>windows 导入证书的方法是双击这个文件，在证书导入向导中将证书导入 <code>受信任的根证书颁发机构</code> :</p>
+<p><img src="https://upload-bbs.mihoyo.com/upload/2022/09/25/260511332/5656eac6b3d34035834f4f8a18392181_3504489147586877598.png" srcset="/z/img/loading.gif" lazyload alt="image.png"></p>
+<p>MacOS 的做法也一样，同样选择将 CA 证书导入到受信任的根证书颁发机构。</p>
+<p>Ubuntu 的做法可以将证书文件（必须是<code>crt</code>后缀）放入 <code>/usr/local/share/ca-certificates/</code> ，然后执行 <code>sudo update-ca-certificates</code></p>
+<p>Android 和 iOS 信任 CA 证书的做法参考 <a target="_blank" rel="noopener" href="https://github.com/FiloSottile/mkcert#mobile-devices">官方文档</a>。</p>
+<p>在局域网其他计算机就可以访问 https 而不报警了。我在另一台虚拟机 Ubuntu 上使用 curl 测试结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ curl -I https://192.168.31.170<br>HTTP/1.0 200 OK<br>Server: SimpleHTTP/0.6 Python/3.6.8<br>Date: Tue, 09 Apr 2019 05:22:12 GMT<br>Content-<span class="hljs-built_in">type</span>: text/html; charset=utf-8<br>Content-Length: 1794<br></code></pre></td></tr></table></figure>
+
+<p>无警告，加上 <code>-v</code> 参数输出还会告诉证书是可信的。</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://github.com/FiloSottile/mkcert">https://github.com/FiloSottile/mkcert</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7cb5c2cffaaa">https://www.jianshu.com/p/7cb5c2cffaaa</a></p>
+<hr>
+<p><em>fin.</em></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Notes/" class="category-chain-item">Notes</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/mkcert/">#mkcert</a>
+      
+        <a href="/z/tags/https/">#https</a>
+      
+        <a href="/z/tags/nginx/">#nginx</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>本地 https 环境解决方案</div>
+      <div>https://cocomi.cf/z/posts/d845bf65/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月24日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/9393cc03/" title="使用 Umami 统计个人网站访问数据">
+                        <span class="hidden-mobile">使用 Umami 统计个人网站访问数据</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>

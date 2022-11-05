@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/z/img/fluid.png">
+  <link rel="icon" href="/z/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakura Yumine">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="概述在项目中要实现动态数据交互，就要用到接口请求插件 vue-resource，它不是 Vue 官方维护的插件，但是使用是最多的，它可以通过 XMLHttpRequest 或 JSONP 发起请求并处理响应。vue-resource 有非常简洁的 API，还提供了非常有用的 inteceptor（拦截器）功能，使用 inteceptor 可以在请求前和请求后附加一些行为，比如使用 intecept">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue-resource 相关总结">
+<meta property="og:url" content="https://cocomi.cf/z/posts/b2e2ddc8/index.html">
+<meta property="og:site_name" content="Himekana&#39;s">
+<meta property="og:description" content="概述在项目中要实现动态数据交互，就要用到接口请求插件 vue-resource，它不是 Vue 官方维护的插件，但是使用是最多的，它可以通过 XMLHttpRequest 或 JSONP 发起请求并处理响应。vue-resource 有非常简洁的 API，还提供了非常有用的 inteceptor（拦截器）功能，使用 inteceptor 可以在请求前和请求后附加一些行为，比如使用 intecept">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2018-01-07T16:00:00.000Z">
+<meta property="article:author" content="Sakura Yumine">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="Vue">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Vue-resource 相关总结 - Himekana&#39;s</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/z/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/z/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/z/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"cocomi.cf","root":"/z/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/z/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/z/js/utils.js" ></script>
+  <script  src="/z/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><link rel="preconnect" href="https://lib.baomitu.com" crossorigin><meta name="referrer" content="no-referrer"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/z/atom.xml" title="Himekana's" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/z/">
+      <strong>Himekana&#39;s</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/z/bangumi/">
+                <i class="iconfont icon-bilibili"></i>
+                追番
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/z/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Vue-resource 相关总结"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-01-08 00:00" pubdate>
+          2018年1月8日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Vue-resource 相关总结</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在项目中要实现动态数据交互，就要用到接口请求插件 vue-resource，它不是 Vue 官方维护的插件，但是使用是最多的，它可以通过 XMLHttpRequest 或 JSONP 发起请求并处理响应。vue-resource 有非常简洁的 API，还提供了非常有用的 inteceptor（拦截器）功能，使用 inteceptor 可以在请求前和请求后附加一些行为，比如使用 inteceptor 在 ajax 请求时显示 loading 界面。下面我们就要了解一下吧。<br>项目地址：<a target="_blank" rel="noopener" href="https://github.com/pagekit/vue-resource">https://github.com/pagekit/vue-resource</a></p>
+<span id="more"></span>
+
+<h2 id="vue-resource-特点"><a href="#vue-resource-特点" class="headerlink" title="vue-resource 特点"></a>vue-resource 特点</h2><p>vue-resource 插件具有以下特点：</p>
+<ul>
+<li><p>体积小<br>vue-resource 非常小巧，在压缩以后只有大约 12KB，服务端启用 gzip 压缩后只有 4.5KB 大小，这远比 jQuery 的体积要小得多。</p>
+</li>
+<li><p>支持主流的浏览器<br>和 Vue.js 一样，vue-resource 除了不支持 IE 9 以下的浏览器，其他主流的浏览器都支持。</p>
+</li>
+<li><p>支持 Promise API 和 URI Templates<br>Promise 是 ES6 的特性，Promise 的中文含义为“先知”，Promise 对象用于异步计算。 URI Templates 表示 URI 模板，有些类似于 ASP.NET MVC 的路由模板。</p>
+</li>
+<li><p>支持拦截器<br>拦截器是全局的，拦截器可以在请求发送前和发送请求后做一些处理。<br>拦截器在一些场景下会非常有用，比如请求发送前在 headers 中设置 access_token，或者在请求失败时，提供共通的处理方式。</p>
+</li>
+</ul>
+<h2 id="vue-resource-基本使用方法"><a href="#vue-resource-基本使用方法" class="headerlink" title="vue-resource 基本使用方法"></a>vue-resource 基本使用方法</h2><h3 id="1-安装与引用"><a href="#1-安装与引用" class="headerlink" title="1. 安装与引用"></a>1. 安装与引用</h3><p>NPM：$ npm install vue-resource –save</p>
+<p>&#x2F;<em>引入 Vue 框架</em>&#x2F;</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vue</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>&#x2F;<em>引入资源请求插件</em>&#x2F;</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">VueResource</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue-resource&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>&#x2F;<em>使用 VueResource 插件</em>&#x2F;</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">use</span>(<span class="hljs-title class_">VueResource</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-语法"><a href="#2-语法" class="headerlink" title="2. 语法"></a>2. 语法</h3><p>引入 vue-resource 后，可以基于全局的 Vue 对象使用 http，也可以基于某个 Vue 实例使用 http。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 基于全局 Vue 对象使用 http</span><br><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [options]).<span class="hljs-title function_">then</span>(successCallback, errorCallback);<br><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-title function_">post</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [body], [options]).<span class="hljs-title function_">then</span>(successCallback, errorCallback);<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 在一个 Vue 实例内使用$http</span><br><span class="hljs-variable language_">this</span>.<span class="hljs-property">$http</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [options]).<span class="hljs-title function_">then</span>(successCallback, errorCallback);<br><span class="hljs-variable language_">this</span>.<span class="hljs-property">$http</span>.<span class="hljs-title function_">post</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [body], [options]).<span class="hljs-title function_">then</span>(successCallback, errorCallback);<br></code></pre></td></tr></table></figure>
+
+<p>在发送请求后，使用 then 方法来处理响应结果，then 方法有两个参数，第一个参数是响应成功时的回调函数，第二个参数是响应失败时的回调函数。</p>
+<p>then 方法的回调函数也有两种写法，第一种是传统的函数写法，第二种是更为简洁的 ES 6 的 Lambda 写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 传统写法</span><br><span class="hljs-variable language_">this</span>.<span class="hljs-property">$http</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [options]).<span class="hljs-title function_">then</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>)&#123;<br>    <span class="hljs-comment">// 响应成功回调</span><br>&#125;, <span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>)&#123;<br>    <span class="hljs-comment">// 响应错误回调</span><br>&#125;);<br><br><span class="hljs-comment">// Lambda 写法</span><br><span class="hljs-variable language_">this</span>.<span class="hljs-property">$http</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/someUrl&#x27;</span>, [options]).<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">response</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 响应成功回调</span><br>&#125;, <span class="hljs-function">(<span class="hljs-params">response</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 响应错误回调</span><br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>关于 options 对象和 response 对象的说明可以参见官方文档。</p>
+<p>emulateHTTP 的作用<br>如果 Web 服务器无法处理 PUT, PATCH 和 DELETE 这种 REST 风格的请求，你可以启用 enulateHTTP 现象。启用该选项后，请求会以普通的 POST 方法发出，并且 HTTP 头信息的 X-HTTP-Method-Override 属性会设置为实际的 HTTP 方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-property">options</span>.<span class="hljs-property">emulateHTTP</span> = <span class="hljs-literal">true</span>;<br></code></pre></td></tr></table></figure>
+
+<p>emulateJSON 的作用<br>如果 Web 服务器无法处理编码为 application&#x2F;json 的请求，你可以启用 emulateJSON 选项。启用该选项后，请求会以 application&#x2F;x-www-form-urlencoded 作为 MIME type，就像普通的 HTML 表单一样。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-property">options</span>.<span class="hljs-property">emulateJSON</span> = <span class="hljs-literal">true</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-使用"><a href="#3-使用" class="headerlink" title="3. 使用"></a>3. 使用</h3><p>我是用传统的函数写法，在各个组件的 Vue 实例中使用$http，然后将成功和错误回掉单独拿出来声明。在 methods 对象中写好函数逻辑处理，然后在 mounted() 函数中调用它，这样渲染这个组件的时候就会发送请求。当然，请求的地址和参数已经在 data() 函数中声明，请求方式根据具体需求来。</p>
+<p>在使用的时候遇到一个小坑，这个$http 请求和 jquery 的 ajax 还是有点区别，这里的 post 的 data 默认不是以 form data 的形式，而是 request payload。解决起来也很简单，将 emulateJSON 属性设置为 true 即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-property">options</span>.<span class="hljs-property">emulateJSON</span> = <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<p>按照 API 说明文档，我请求回来的 response 只需要调用 json() 方法就可以返回 JSON 对象，然而返回却是 Promise 对象。看图。我不太了解 Promise，查了资料目前也没整明白，文档上面 type 是 Promise，但是描述里面又说是转化成 JSON 对象。反正最后我的代码里是转化了一下的，拿到 JSON 对象了我们就可以进行其他逻辑处理了。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> data = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(response.<span class="hljs-property">body</span>);<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-inteceptor（拦截器）"><a href="#4-inteceptor（拦截器）" class="headerlink" title="4.inteceptor（拦截器）"></a>4.inteceptor（拦截器）</h3><p>拦截器可以在请求发送前和发送请求后做一些处理。<br>在 response 返回给 successCallback 或 errorCallback 之前，你可以修改 response 中的内容，或做一些处理。<br>例如，响应的状态码如果是 404，你可以显示友好的 404 界面。<br>比如我们就用拦截器做了登录处理，所以请求发送之前都要通过拦截器验证当前用户是否登陆，否则提示登录页面。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">Vue</span>.<span class="hljs-property">http</span>.<span class="hljs-property">interceptors</span>.<span class="hljs-title function_">push</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">request, next</span>) &#123;<br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-comment">// 请求发送前的处理逻辑</span><br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-title function_">next</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) &#123;<br>        <span class="hljs-comment">// ...</span><br>        <span class="hljs-comment">// 请求发送后的处理逻辑</span><br>        <span class="hljs-comment">// ...</span><br>        <span class="hljs-comment">// 根据请求的状态，response 参数会返回给 successCallback 或 errorCallback</span><br>        <span class="hljs-keyword">return</span> response<br>    &#125;)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="5-proxy（代理）"><a href="#5-proxy（代理）" class="headerlink" title="5.proxy（代理）"></a>5.proxy（代理）</h3><p>场景：在本地 serve 发送 API 接口请求，那我们得用跨域了吧，jsonp，但是我们后端说跨域不安全，接口没有实现跨域请求，就算开发时候跨域请求成功，那上线时不可能去修改所有的请求方式吧。于是就各种搜索解决方案，在打算用 Nginx 代理的时候，发现了 Vue.js 的 webpack 模板中自带了一个代理，泪奔，赶紧修改。<br>文档地址：<a target="_blank" rel="noopener" href="https://vuejs-templates.github.io/webpack/proxy.html">https://vuejs-templates.github.io/webpack/proxy.html</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要分享了 vue-resource 插件的安装与使用，以及在使用的过程中遇到的一些问题及处理方法，其中我认为比较重要的点，也就是在开发过程中可能遇到的坑而且在没人告知的情况下最容易卡住的地方已经在 3. 使用和 5.proxy（代理）巨坑 中说明了，文中若有错误，请大家指出。</p>
+<p>整个项目从基本构建到 vue-router 插件到 vue-resource 已经可以实现整个项目的架构了，Vuex 在这里不适用也不做介绍，后期有机会将新增分享。接下来我将就项目中某些具体的功能实现和一些 Vue 的使用技巧上做一些分享。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>参考文章：<a target="_blank" rel="noopener" href="http://www.cnblogs.com/keepfool/p/5657065.html">http://www.cnblogs.com/keepfool/p/5657065.html</a><br>————————————————<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013778905/article/details/54235906">https://blog.csdn.net/u013778905/article/details/54235906</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/z/categories/Repost/" class="category-chain-item">Repost</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/z/tags/JavaScript/">#JavaScript</a>
+      
+        <a href="/z/tags/Vue/">#Vue</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Vue-resource 相关总结</div>
+      <div>https://cocomi.cf/z/posts/b2e2ddc8/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Sakura Yumine</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年1月8日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                <i class="iconfont icon-nc"></i>
+              </span>
+              </a>
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                <i class="iconfont icon-sa"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/z/posts/9b0da72f/" title="利用 Settings Sync 插件同步 VS Code 设置">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">利用 Settings Sync 插件同步 VS Code 设置</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/z/posts/a6cb3820/" title="AngularJs 开发的一些基本准则">
+                        <span class="hidden-mobile">AngularJs 开发的一些基本准则</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.13.0/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.13.0/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://wlsrv.kanata.ml","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/weibo/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/tieba/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/qq/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/bilibili/","https://cdn.jsdelivr.net/npm/@waline/emojis@1.0.1/alus/"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":240,"pageSize":10,"visitor":".leancloud-visitors-count","pageview":".leancloud-visitors-count","comment":true,"imageUploader":false,"locale":{"placeholder":"填写邮箱，可以收到回复通知哦～"}},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Powered by Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Theme Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/z/js/events.js" ></script>
+<script  src="/z/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/z/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/z/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/z/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script async defer data-website-id="8d8b6603-2a7b-4e30-b1c4-b763d89ff84e" src="https://ummst.nanoka.top/5y6l9drdtjx.js"></script><!-- hexo injector body_end end --></body>
+</html>
