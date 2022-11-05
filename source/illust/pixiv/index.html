@@ -1,0 +1,225 @@
+---
+title: Pixiv Ranking
+comments: false
+---
+<header class="post-header">
+  <h1 class="post-title" itemprop="name headline">Pixiv Ranking</h1>
+</header>
+<!-- more -->
+<link rel="stylesheet" href="https://lib.baomitu.com/fancyapps-ui/4.0.27/fancybox.min.css">
+<style>
+  #page {
+    margin: 0;
+  }
+
+  article#page {
+    padding-top: 0;
+  }
+
+  .hty-card>.post-header,
+  .post-meta {
+    display: none;
+  }
+
+  .post-body {
+    padding: 0;
+  }
+
+  #live2d-widget {
+    opacity: 0 !important;
+  }
+
+  .rank_container img {
+    cursor: zoom-in;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    max-height: unset !important;
+  }
+
+  .rank_container img:hover {
+    transform: scale(1.2);
+  }
+
+  .pixiv_rank {
+    padding: 2em 0;
+  }
+
+  .rank_container h3 span {
+    margin: 0 8px;
+  }
+
+  #macy-container {
+    width: 95%;
+    max-width: 1467px;
+    margin: 0 auto;
+  }
+
+  .demo-image {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+
+  .demo-image.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .demo {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+    overflow: hidden;
+  }
+
+  .demo .demo-index {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    line-height: 28px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+  }
+
+  .demo .demo-mp {
+    left: unset;
+    right: 0;
+  }
+
+  .demo .demo-desp {
+    left: unset;
+    top: unset;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: 0.4s;
+  }
+
+  .demo:hover .demo-desp {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .demo .demo-desp h5 {
+    margin: 5px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .demo .demo-desp p {
+    margin: 0 0 5px;
+  }
+
+  [v-cloak] {
+    display: none !important;
+  }
+
+  .carousel__button {
+    margin: 0 2px;
+  }
+
+  .btn_container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .load_btn {
+    width: 77px;
+    height: 32px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border: 0;
+    border-radius: 6px;
+    color: #fff;
+    outline: 0;
+    background: linear-gradient(to right, #8f94fb, #4e54c8);
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity, transform 0.2s;
+    cursor: pointer;
+  }
+
+  .load_btn.act {
+    background: linear-gradient(to right, #ff5858, #f857a6);
+  }
+
+  .load_btn_r {
+    background: linear-gradient(to right, #e35d5b, #e53935);
+  }
+
+  .load_more_btn {
+    background: linear-gradient(to right, #2948ff, #396afc);
+  }
+
+  .load_btn:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+</style>
+<section id="pixiv_rank">
+  <div class="rank_container">
+    <h3 style="margin-top:5px;text-align:center" @dblclick="showRBtn=true">
+      <input v-model="rankDay" type="date" style="font-size:18px;cursor:auto;" @change="onDateChange">
+      <span><a href="https://pixiv.moe/" target="_blank" rel="nofollow noreferrer">pixivmoe</a></span>
+      <span><a href="https://pixivic.com/" target="_blank" rel="nofollow noreferrer">pixivic</a></span>
+      <span><a href="https://www.vilipix.com/ranking" target="_blank" rel="nofollow noreferrer">vilipix</a></span>
+      <span><a href="https://pixivel.moe/rank" target="_blank" rel="nofollow noreferrer">pixivel</a></span>
+      <span><a href="https://pixiviz.pwp.app/rank" target="_blank" rel="nofollow noreferrer">pixiviz</a></span>
+    </h3>
+    <div class="spinner" v-show="loading"></div>
+    <div id="macy-container" v-cloak>
+      <div v-show="!loading">
+        <div class="btn_container" style="margin-top:-5px;">
+          <button class="load_btn" :class="{act:page>0&&rankType=='day'}" @click="fetchModeRank('day')">日榜</button>
+          <button class="load_btn" :class="{act:rankType=='week'}" @click="fetchModeRank('week')">周榜</button>
+          <button class="load_btn" :class="{act:rankType=='month'}" @click="fetchModeRank('month')">月榜</button>
+          <button class="load_btn" :class="{act:rankType=='week_rookie'}"
+            @click="fetchModeRank('week_rookie')">新人</button>
+          <button class="load_btn" :class="{act:rankType=='week_original'}"
+            @click="fetchModeRank('week_original')">原创</button>
+          <button class="load_btn" :class="{act:rankType=='day_male'}" @click="fetchModeRank('day_male')">男性向</button>
+          <button class="load_btn" :class="{act:rankType=='day_female'}"
+            @click="fetchModeRank('day_female')">女性向</button>
+          <button v-if="showRBtn" class="load_btn load_btn_r" @click="fetchModeRank('day_r18')">R18</button>
+        </div>
+      </div>
+      <true-masonry :gap="{init: 16}" :cols="{init: 6, 1600: 4, 1200: 3, 500: 2, 400: 2}" :has-imgs="true">
+        <div class="demo" v-for="(item,index) in list" :key="index">
+          <img v-for="(img,imgIndex) in item" v-show="imgIndex==0" class="demo-image" :data-fancybox="index"
+            :data-src="img.large" :data-download-src="img.original" :data-caption="img.caption" :data-thumb="img.thumb"
+            :data-pixiv-link="img.link" :src="imgIndex==0?img.thumb:''" loading="lazy" alt>
+          <a class="demo-index" :href="item[0].link" v-text="`#${index+1}`" target="_blank" rel="nofollow noreferrer"></a>
+          <div v-if="item.length>1" class="demo-index demo-mp" v-text="`${item.length} 张`"></div>
+          <div class="demo-index demo-desp">
+            <h5 v-text="item[0].title" :title="item[0].title"></h5>
+            <p v-text="item[0].author" :title="item[0].author"></p>
+          </div>
+        </div>
+      </true-masonry>
+      <div v-show="moreLoading" class="spinner"></div>
+      <div v-show="!loading&&!moreLoading&&!noMore" class="btn_container" style="margin-top: 60px;">
+        <button v-if="page==0" class="load_btn load_more_btn" @click="fetchModeRank('day')">查看全部</button>
+        <button v-else class="load_btn load_more_btn" @click="getMoreData()">加载更多</button>
+      </div>
+      <p v-show="noMore" style="text-align:center;">没有了...</p>
+    </div>
+  </div>
+</section>
+<script src="https://lib.baomitu.com/vue/2.6.14/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery.imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
+<script>ImageLoaded = imagesLoaded;</script>
+<script src="https://code.bdstatic.com/npm/true-masonry@1.0.5/dist/true-masonry.min.js"></script>
+<script src="https://lib.baomitu.com/fancyapps-ui/4.0.27/fancybox.umd.min.js"></script>
+<script src="./index.js"></script>
